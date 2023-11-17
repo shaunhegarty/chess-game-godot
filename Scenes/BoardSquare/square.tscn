@@ -1,0 +1,18 @@
+[gd_scene load_steps=5 format=3 uid="uid://btu06rjykkxfp"]
+
+[ext_resource type="Script" path="res://Scenes/BoardSquare/BoardSquare.cs" id="1_24e0k"]
+[ext_resource type="Material" uid="uid://c6m7ytrirmrhx" path="res://Materials/square_black.tres" id="2_o0dhx"]
+[ext_resource type="Material" uid="uid://c0lxw4vfs5h7p" path="res://Materials/square_white.tres" id="2_ylwku"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_5ttqv"]
+material = ExtResource("2_o0dhx")
+size = Vector3(1, 0.1, 1)
+
+[node name="Square" type="Node3D"]
+script = ExtResource("1_24e0k")
+WhiteMaterial = ExtResource("2_ylwku")
+BlackMaterial = ExtResource("2_o0dhx")
+
+[node name="SquareMesh" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_5ttqv")
+surface_material_override/0 = ExtResource("2_ylwku")
