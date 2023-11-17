@@ -5,6 +5,7 @@ using Godot;
 public partial class BoardSquare : Node3D
 {
 	private Team _teamColor = Team.White;
+	private float _squareSize = 1;
 
 	[Export]
 	private Team TeamColor
@@ -17,6 +18,21 @@ public partial class BoardSquare : Node3D
 	}
 	[Export] public Material WhiteMaterial;
 	[Export] public Material BlackMaterial;
+	[Export] private float SquareSize
+	{
+		get { return _squareSize; }
+		set
+		{
+			if (IsNodeReady())
+			{
+				_squareSize = value;
+				var boxMesh = (BoxMesh)_mesh.Mesh;
+				boxMesh.Size = new Vector3(_squareSize, 0.1f, _squareSize);
+
+			}
+		}
+	}
+
 	private MeshInstance3D _mesh;
 
 	// Called when the node enters the scene tree for the first time.
