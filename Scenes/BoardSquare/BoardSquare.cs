@@ -57,11 +57,6 @@ public partial class BoardSquare : Node3D
 		_setupComplete = true;
 	}
 
-	private void SetMaterial(Material material)
-	{
-		_mesh.SetSurfaceOverrideMaterial(0, material);
-	}
-
 	private void SetTeam(Team team)
 	{
 		_teamColor = team;
@@ -75,7 +70,7 @@ public partial class BoardSquare : Node3D
 	private void SetMaterialFromTeam()
 	{
         Material material = TeamColor == Team.White ? WhiteMaterial : BlackMaterial;
-		SetMaterial(material);
+        _mesh.SetSurfaceOverrideMaterial(0, material);
     }
 
 	public string CoordinateString()

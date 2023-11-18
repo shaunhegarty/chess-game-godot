@@ -18,31 +18,50 @@ namespace Chess
         // State
         public Board board;
         public Dictionary<Team, List<Piece>> pieces = new();
-        private Team teamInCheck;
+        private Check checkState = new();
+
         public int Turn { get; private set; } = 1;
         public Team TeamTurn { get; private set; } = Team.White;
         public Team NonTeamTurn { get; private set; } = Team.Black;
+        public bool CheckMate { get { return checkState.isMate; } }
+        public string LastMove = "";
 
-        public bool checkMate = false;
+        public delegate void NextTurnCallback();
+        private NextTurnCallback nextTurnCallback;
+        public void SetNextTurnCallBack(NextTurnCallback cb) => nextTurnCallback = cb;
 
+        public delegate void PromotionCallBack(Piece piece);
+        private PromotionCallBack promotionCallBack;
+        public void SetPromotionCallback(PromotionCallBack pcb) => promotionCallBack = pcb;
 
-        public ChessGame()
+        public ChessGame() => board = new Board(boardSize);
+
+        private int IndexByTeam(Team team, int i) => team == Team.White ? i : boardSize - i - 1;
+
+        private static Team GetOppositeTeam(Team team) => team == Team.Black ? Team.White : Team.Black;
+
+        public void SetupStalemateBoard()
         {
-            board = new Board(boardSize);
-        }
+            pieces = new()
+            {
+                { Team.White, new() },
+                { Team.Black, new() }
+            };
 
-        private int IndexByTeam(Team team, int i)
-        {
-            return team == Team.White ? i : boardSize - i - 1;
-        }
+            // King and Queen
+            AddPieceToBoard(PieceType.Queen, Team.Black, new(1, 7));
+            AddPieceToBoard(PieceType.Queen, Team.Black, new(7, 1));
+            AddPieceToBoard(PieceType.King, Team.Black, new(7, 7));
+            AddPieceToBoard(PieceType.King, Team.White, new(1, 1));
 
+        }
         public void SetupBoard()
         {
             pieces = new() {
                 { Team.White, new()},
                 { Team.Black, new()}
             };
-            foreach (Team team in Teams)
+            foreach (Team team in ChessGame.Teams)
             {
                 int startRow = IndexByTeam(team, 0);
                 // Pawns
@@ -78,8 +97,9 @@ namespace Chess
 
         private void AddPieceToBoard(PieceType pieceType, Team team, Vector2I position)
         {
-            Piece piece = new(pieceType, team, board);
+            Piece piece = new(pieceType, team, this);
             Square square = GetSquareByPosition(position);
+            square.RemovePiece();
             square.AddPiece(piece);
 
             pieces.TryGetValue(team, out List<Piece> teamPieces);
@@ -88,15 +108,37 @@ namespace Chess
 
         public void MovePiece(Piece piece, Vector2I targetPosition)
         {
-            GD.Print($"Moved {piece} to {Square.LabelFromPosition(targetPosition)}");
-            Square oldSquare = piece.currentSquare;
-            oldSquare.RemovePiece();
+            LastMove = $"Moved {piece} to {Square.LabelFromPosition(targetPosition)}";
 
+            Square oldSquare = piece.currentSquare;
             Square targetSquare = GetSquareByPosition(targetPosition);
+
+            piece.AddMove(new Move(oldSquare.position, targetPosition, Turn));
+            // Was that an en passant !?!?
+            if (piece.WasLastMovePawnAttack())
+            {
+                DoEnPassant(piece);
+            }
+
+            oldSquare.RemovePiece();
             targetSquare.RemovePiece();
             targetSquare.AddPiece(piece);
 
+
+
+            // Was this a castle move?
+            if (piece.type == PieceType.King && Utils.Distance(oldSquare.position, targetSquare.position) == 2)
+            {
+                DoCastle(piece.team);
+            }
+
             piece.PostMove();
+
+            // Is there a promotable pawn?
+            if (piece.IsPromotablePawn())
+            {
+                promotionCallBack(piece);
+            }
 
             NextTurn();
         }
@@ -108,22 +150,23 @@ namespace Chess
             TeamTurn = Turn % 2 == 0 ? Team.Black : Team.White;
             NonTeamTurn = TeamTurn == Team.White ? Team.Black : Team.White;
 
-            if (CalculateCheckAll(NonTeamTurn))
+            var check = new Check
             {
-                GD.Print($"{TeamTurn}'s King is in check");
-                if (IsThatCheckMate(TeamTurn))
-                {
-                    GD.Print($"That's Checkmate! {NonTeamTurn} Wins!");
-                    checkMate = true;
-                }
-            }
+                teamInCheck = TeamTurn,
+                inCheck = CalculateCheckAll(NonTeamTurn),
+                isMate = IsThatItMate(TeamTurn)
+            };
+
+            SetCheck(check);
+
+
+            nextTurnCallback?.Invoke();
 
         }
 
-        public void SetTeamInCheck(Team team)
+        public void SetCheck(Check check)
         {
-            teamInCheck = team;
-            GD.Print($"{teamInCheck}'s King is in check");
+            checkState = check;
         }
 
         public Piece GetKing(Team team)
@@ -139,24 +182,72 @@ namespace Chess
             throw new KeyNotFoundException("Can't find the King!");
         }
 
-        public bool CalculateCheck(Team team)
+        public List<Piece> GetRooks(Team team)
         {
-            bool isInCheck = false;
-            // Can black pieces reach the white king
-            pieces.TryGetValue(team, out var teamPieces);
-            foreach (var piece in teamPieces)
+            List<Piece> rooks = new();
+            pieces.TryGetValue(team, out List<Piece> teamPieces);
+            foreach (Piece piece in teamPieces)
             {
-                if (piece.CanRegicide)
+                if (piece.type == PieceType.Rook)
                 {
-                    isInCheck = true;
+                    rooks.Add(piece);
                 }
             }
-            return isInCheck;
+            return rooks;
         }
 
-        private static Team GetOppositeTeam(Team team)
+        public void DoEnPassant(Piece passingPawn)
         {
-            return team == Team.Black ? Team.White : Team.Black;
+            Move lastMove = passingPawn.LastMove();
+            int direction = passingPawn.team == Team.Black ? -1 : 1;
+            Vector2I attackPosition = lastMove.To - new Vector2I(direction, 0);
+            var attackSquare = GetSquareByPosition(attackPosition);
+            var attackPiece = attackSquare.occupant;
+            if (attackPiece.EnPassantable)
+            {
+                attackSquare.RemovePiece();
+                attackPiece.PostMove();
+            }
+        }
+
+        public void DoCastle(Team team)
+        {
+            // Assumes the King has already been moved its two places
+            var rooks = GetRooks(team);
+            var king = GetKing(team);
+
+            // Once the king's two step move is done we need to re-establish which is the correct rook in context
+            float distance = float.MaxValue;
+            Piece closestRook = null;
+
+            foreach (Piece rook in rooks)
+            {
+                if (rook.currentSquare != null)
+                {
+                    float toKing = Utils.Distance(rook.currentSquare.position, king.currentSquare.position);
+                    if (toKing < distance)
+                    {
+                        closestRook = rook;
+                        distance = toKing;
+                    }
+                }
+            }
+
+            if (closestRook != null)
+            {
+                Vector2I rookDirection = closestRook.currentSquare.position - king.currentSquare.position;
+                rookDirection.Y = Math.Sign(rookDirection.Y);  // normalize of sorts
+
+                var targetSquare = GetSquareByPosition(king.currentSquare.position - rookDirection);
+                closestRook.currentSquare.RemovePiece();
+                targetSquare.AddPiece(closestRook);
+                closestRook.PostMove();
+            }
+        }
+
+        public bool IsTeamInCheck(Team team)
+        {
+            return checkState.inCheck && checkState.teamInCheck == team;
         }
 
         public bool CalculateCheckAll(Team team)
@@ -168,7 +259,7 @@ namespace Chess
             // Add all the covered squares to set
             foreach (var piece in teamPieces)
             {
-                coverage.UnionWith(piece.GetValidSquares());
+                coverage.UnionWith(piece.GetValidSquares(simulate: false));
             }
 
             // Get the opposing King
@@ -178,19 +269,14 @@ namespace Chess
             return isInCheck;
         }
 
-        /* Determining CheckMate */
-        // Simulate every possible move for a given turn
-        // If any result in a non-check scenario, then it is not check mate
-        // Only need to do this if the king has been determined to be in check??
-
-        /* Simulating a move */
-        // Update the board state
-        // Do Check Calc
-        // Rewind Board State
-
-        public void SimulateMoveUnderCheck(Piece piece, Vector2I targetPosition, out bool stillInCheck)
+        public void SimulateMove(Piece piece, Vector2I targetPosition, out bool stillInCheck)
         {
-            // GD.Print($"Simulating {piece} Moving to {Square.LabelFromPosition(targetPosition)}");
+            /* Simulating a move */
+            // Update the board state
+            // Do Check Calc
+            // Rewind Board State */
+
+            // Debug.Log($"Simulating {piece} Moving to {Square.LabelFromPosition(targetPosition)}");
 
             // Update the board state
             var oldSquare = piece.currentSquare;
@@ -213,8 +299,12 @@ namespace Chess
 
         }
 
-        public bool IsThatCheckMate(Team team)
+        public bool IsThatItMate(Team team)
         {
+            // Simulate every possible move for a given turn
+            // If king is in check and any result in a non-check scenario, then it is not check mate
+            // If king is not in check and any result in a non-check scenario, then it is not stale mate            
+
             // Team X is in check, we want to find out if there is any way out. 
             // Get All the pieces for Team X
             pieces.TryGetValue(team, out var teamPieces);
@@ -228,12 +318,12 @@ namespace Chess
                     continue;
                 }
                 // get all the moves
-                var allowedSquares = piece.GetValidSquares();
+                var allowedSquares = piece.GetValidSquares(simulate: false);
 
                 // simulate each move, and see if it still results in check
                 foreach (var move in allowedSquares)
                 {
-                    SimulateMoveUnderCheck(piece, move.position, out bool stillInCheck);
+                    SimulateMove(piece, move.position, out bool stillInCheck);
                     if (!stillInCheck)
                     {
                         return false;
@@ -241,6 +331,52 @@ namespace Chess
                 }
             }
             return true;
+        }
+
+        public string GameInfo()
+        {
+            string checkMessage = "";
+            if (checkState.inCheck && checkState.isMate)
+            {
+                checkMessage = $"\nThat's Checkmate! {GetOppositeTeam(checkState.teamInCheck)} Wins!";
+            }
+            else if (checkState.isMate)
+            {
+                checkMessage = $"\nOof! That's a stalemate! Nobody Wins!";
+            }
+            else if (checkState.inCheck)
+            {
+                checkMessage = $"{checkState.teamInCheck} is in check!";
+            }
+
+            return
+                $"Last Move: \n - {LastMove}\n\n" +
+                $"Turn: {Turn}\n" +
+                $"Team: {TeamTurn}\n" +
+                $"{checkMessage}";
+        }
+
+        public Piece PromotePawn(Piece pawn, PieceType promotion)
+        {
+            GD.Print($"Promoting to {promotion}");
+            var square = pawn.currentSquare;
+            var position = pawn.currentSquare.position;
+            var moveHistory = pawn.MovesList;
+            AddPieceToBoard(promotion, pawn.team, position);
+            square.occupant.MovesList = moveHistory;
+
+            pieces.TryGetValue(pawn.team, out var teamPieces);
+            teamPieces.Remove(pawn);
+            pawn.PostMove();
+
+            return square.occupant;
+        }
+
+        public struct Check
+        {
+            public bool inCheck;
+            public bool isMate;
+            public Team teamInCheck;
         }
     }
 
@@ -258,7 +394,7 @@ namespace Chess
         public string Label { get { return LabelFromPosition(position); } }
 
         public static string LabelFromPosition(Vector2I pos)
-        {           
+        {
             return $"{(char)('A' + pos.Y)}{pos.X + 1}";
         }
 
@@ -292,7 +428,7 @@ namespace Chess
 
     public class Board
     {
-        readonly List<List<Square>> internalBoard;
+        private readonly List<List<Square>> internalBoard;
         public int size = 0;
 
         public Board(int boardSize)
@@ -314,31 +450,7 @@ namespace Chess
         {
             return internalBoard[position.X][position.Y];
         }
-
-        public Square GetSquare(int x, int y)
-        {
-            return internalBoard[x][y];
-        }
-
-        public List<Square> GetSquares()
-        {
-            List<Square> squares = new();
-            foreach (List<Square> row in internalBoard)
-            {
-                foreach (Square square in row)
-                {
-                    squares.Add(square);
-                }
-            }
-            return squares;
-        }
     }
-
-    public enum PieceType
-    {
-        King, Queen, Bishop, Rook, Knight, Pawn
-    }
-
 
     public class Piece
     {
@@ -347,70 +459,196 @@ namespace Chess
         public Team team;
         public Movement PieceMovement { get; private set; }
 
-        public Board ChessBoard;
+        public ChessGame Game;
 
         // State
         public Square currentSquare;
-        public int MoveCount { get; private set; }
+        public int MoveCount { get { return movesList.Count; } }
         public List<Square> allowedSquares;
-        public bool CanRegicide { get; private set; } = false;
+
+        private List<Move> movesList = new();
 
         // Property
         public bool IsKing { get { return type == PieceType.King; } }
+        public bool EnPassantable
+        {
+            get
+            {
+                if (type != PieceType.Pawn)
+                {
+                    return false;
+                }
+                var lastMove = LastMove();
+                if (lastMove != null)
+                {
+                    bool oneTurnAgo = Game.Turn - lastMove.Turn == 1;
+                    return type == PieceType.Pawn && MoveCount > 0 && oneTurnAgo && lastMove.Distance == 2;
+                }
+                return false;
+            }
+        }
 
+        public List<Move> MovesList { get => movesList; set => movesList = value; }
 
-        public Piece(PieceType pieceType, Team pieceTeam, Board board)
+        public delegate void OnMoveCallback();
+        private OnMoveCallback onMoveCallback;
+        public void SetOnMoveCallback(OnMoveCallback onMoveCb) => onMoveCallback = onMoveCb;
+
+        public Piece(PieceType pieceType, Team pieceTeam, ChessGame game)
         {
             type = pieceType;
             team = pieceTeam;
             PieceMovement = Movement.GetMovement(type);
-            ChessBoard = board;
+            Game = game;
         }
-
 
         // PostMove updates and calculations
         public void PostMove()
         {
-            allowedSquares = GetValidSquares();
-            MoveCount++;
-            CanRegicide = PieceCanRegicide();
+            onMoveCallback?.Invoke();
         }
 
-        public List<Square> GetValidSquares()
+        public List<Square> GetValidSquares(bool simulate)
         {
             if (currentSquare == null)
             {
                 return new();
             }
-            try
+            var moves = PieceMovement.GetValidSquares(Game.board, currentSquare.position);
+            if (simulate)
             {
-                return PieceMovement.GetValidSquares(ChessBoard, currentSquare.position);
-            }
-            catch (NullReferenceException e)
-            {
-                GD.Print($"What's going on with {this} ... {currentSquare}?");
-                throw e;
-            }
 
+                List<Square> slimMoves = new();
+                foreach (var move in moves)
+                {
+                    Game.SimulateMove(this, move.position, out bool InCheck);
+                    if (!InCheck)
+                    {
+                        slimMoves.Add(move);
+                    }
+                }
+
+                // Castle Checks
+                slimMoves.AddRange(GetCastleMoves());
+
+                return slimMoves;
+            }
+            else
+            {
+                return moves;
+            }
         }
 
-
-        // i.e. can this piece attack the opponent's King
-        public bool PieceCanRegicide()
+        private List<Square> GetCastleMoves()
         {
-            foreach (Square square in allowedSquares)
+            List<Square> castleMoves = new();
+            if (!Game.IsTeamInCheck(team) && type == PieceType.King && MoveCount == 0)
             {
-                if (square.occupant != null && square.occupant.IsKing)
+                foreach (Piece rook in Game.GetRooks(team))
                 {
-                    return true;
+                    if (rook.MoveCount == 0)
+                    {
+                        // Get the rook direction
+                        Vector2I rookDirection = rook.currentSquare.position - currentSquare.position;
+                        rookDirection.Y = Math.Sign(rookDirection.Y);
+
+                        // check each space on the way to the rook
+                        bool allowed = true;
+                        for (int i = 1; i <= 2 && allowed; i++)
+                        {
+                            Square interSquare = Game.board.GetSquare(currentSquare.position - i * rookDirection);
+                            if (interSquare.state == SquareState.Occupied)
+                            {
+                                allowed = false;
+                            }
+                            if (allowed)
+                            {
+                                Game.SimulateMove(this, interSquare.position, out bool InCheck);
+                                if (InCheck)
+                                {
+                                    allowed = false;
+                                }
+                            }
+                        }
+                        if (allowed)
+                        {
+                            castleMoves.Add(Game.board.GetSquare(currentSquare.position - 2 * rookDirection));
+                        }
+                    }
                 }
             }
-            return false;
+            return castleMoves;
         }
 
         public override string ToString()
         {
             return $"{team} {type} @ {currentSquare}";
+        }
+
+        public void AddMove(Move move)
+        {
+            movesList.Add(move);
+        }
+
+        public Move LastMove()
+        {
+            if (movesList.Count > 0)
+            {
+                return movesList[^1];
+            }
+            return null;
+        }
+
+        public bool WasLastMovePawnAttack()
+        {
+            // Should try to reuse code from the Movement class if possible
+            if (type == PieceType.Pawn)
+            {
+                Move lastMove = LastMove();
+                if (lastMove != null)
+                {
+                    // This direction stuff is getting reused, should probably abstract it away a bit.
+                    Vector2I teamDirection = new(team == Team.Black ? -1 : 1, 1);
+                    PawnMovement movement = (PawnMovement)PieceMovement;
+                    return movement.attackMoves.Contains(lastMove.Direction * teamDirection);
+                }
+
+            }
+            return false;
+        }
+
+        public bool IsPromotablePawn()
+        {
+            int backRow = team == Team.White ? 7 : 0;
+            return type == PieceType.Pawn && currentSquare.position.X == backRow;
+        }
+    }
+
+    public class Move
+    {
+        Vector2I from;
+        Vector2I to;
+        readonly int turn;
+
+        public Move(Vector2I moveFrom, Vector2I moveTo, int moveTurn)
+        {
+            // Ensure it's a copy
+            from = new(moveFrom.X, moveFrom.Y);
+            to = new(moveTo.X, moveTo.Y);
+            turn = moveTurn;
+        }
+
+        public Vector2I Direction => to - from;
+        public float Distance => Utils.Distance(from, to);
+
+        public Vector2I To { get => to; }
+        public Vector2I From { get => from; }
+
+        public int Turn => turn;
+
+        public override string ToString()
+        {
+            return $"{Square.LabelFromPosition(from)} to {Square.LabelFromPosition(to)} on turn {turn}";
         }
     }
 
@@ -418,6 +656,12 @@ namespace Chess
     {
         Black, White
     }
+
+    public enum PieceType
+    {
+        King, Queen, Bishop, Rook, Knight, Pawn
+    }
+
 
 }
 

@@ -1,0 +1,27 @@
+[gd_scene load_steps=6 format=3 uid="uid://be1m55vp2w4ej"]
+
+[ext_resource type="Script" path="res://Scenes/Piece/GamePiece.cs" id="1_bxjjv"]
+[ext_resource type="Material" uid="uid://c0lxw4vfs5h7p" path="res://Materials/square_white.tres" id="2_dws0o"]
+[ext_resource type="Material" uid="uid://c6m7ytrirmrhx" path="res://Materials/square_black.tres" id="2_q12xd"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_35ojt"]
+size = Vector3(0.5, 0.5, 0.5)
+
+[sub_resource type="SystemFont" id="SystemFont_b3job"]
+multichannel_signed_distance_field = true
+
+[node name="GamePiece" type="Node3D"]
+script = ExtResource("1_bxjjv")
+WhiteMaterial = ExtResource("2_dws0o")
+BlackMaterial = ExtResource("2_q12xd")
+
+[node name="PieceMesh" type="MeshInstance3D" parent="."]
+unique_name_in_owner = true
+mesh = SubResource("BoxMesh_35ojt")
+surface_material_override/0 = ExtResource("2_dws0o")
+
+[node name="PieceLabel" type="Label3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.349767, 0)
+text = "Pawn"
+font = SubResource("SystemFont_b3job")
