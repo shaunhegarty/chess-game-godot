@@ -15,6 +15,7 @@ subpixel_positioning = 3
 multichannel_signed_distance_field = true
 
 [node name="Square" type="Node3D"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0, 0)
 script = ExtResource("1_3sqja")
 
 [node name="SquareMesh" type="MeshInstance3D" parent="."]

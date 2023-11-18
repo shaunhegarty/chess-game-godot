@@ -4,4 +4,3 @@
 
 [node name="Board" type="Node3D"]
 script = ExtResource("1_oc3bd")
-BoardEdgeCount = 3

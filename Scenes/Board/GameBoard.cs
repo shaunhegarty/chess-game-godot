@@ -63,9 +63,9 @@ public partial class GameBoard : Node3D
         var j = index.Y;
 
         Vector3 position = new(x: i * BoardSquareLength, y: 0, z: j * BoardSquareLength);
-        boardSquare.TeamColor = (i + j) % 2 == 0 ? Team.Black : Team.White;
-        boardSquare.Index = index;
+        boardSquare.Coordinates = index;
         boardSquare.BasePosition = position;
+        boardSquare.TeamColor = (i + j) % 2 == 0 ? Team.Black : Team.White;
 
         return boardSquare;
     }

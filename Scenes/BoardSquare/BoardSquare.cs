@@ -9,7 +9,7 @@ public partial class BoardSquare : Node3D
 	private Label3D _label;
     private MeshInstance3D _mesh;
 	private Vector3 _basePosition;
-	public Vector2I Index;
+	public Vector2I Coordinates;
 
 	private Material WhiteMaterial = ResourceLoader.Load<Material>("res://Materials/square_white.tres");
     private Material BlackMaterial = ResourceLoader.Load<Material>("res://Materials/square_black.tres");
@@ -40,7 +40,7 @@ public partial class BoardSquare : Node3D
 		get { return _squareSize; }
 		set
 		{
-			if (IsNodeReady())
+			if (_setupComplete)
 			{
 				_squareSize = value;
 				var boxMesh = (BoxMesh)_mesh.Mesh;
@@ -68,7 +68,7 @@ public partial class BoardSquare : Node3D
 		if (_setupComplete)
 		{
 			SetMaterialFromTeam();
-			_label.Text = $"{TeamColor}";
+			_label.Text = $"{TeamColor}\n{CoordinateString()}";
 		}
 	}
 
@@ -76,5 +76,11 @@ public partial class BoardSquare : Node3D
 	{
         Material material = TeamColor == Team.White ? WhiteMaterial : BlackMaterial;
 		SetMaterial(material);
+    }
+
+	public string CoordinateString()
+	{
+        char letter = (char)('A' + Coordinates.X);
+        return $"{letter}{Coordinates.Y + 1}";
     }
 }
