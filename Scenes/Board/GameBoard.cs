@@ -5,8 +5,7 @@ using System.Collections.Generic;
 [Tool]
 public partial class GameBoard : Node3D
 {
-    [Export] public PackedScene BoardSquareScene;
-
+    private PackedScene BoardSquareScene = ResourceLoader.Load<PackedScene>("res://Scenes/BoardSquare/Square.tscn");
     private int _boardEdgeCount = 8;
 
     [Export] private int BoardSquareLength = 1;
@@ -51,7 +50,6 @@ public partial class GameBoard : Node3D
                 Vector2I index = new(j, i);
                 BoardSquare boardSquare = CreateSquare(index);
                 Squares.Add(boardSquare);
-                AddChild(boardSquare);
             }
         }
     }
@@ -59,6 +57,7 @@ public partial class GameBoard : Node3D
     private BoardSquare CreateSquare(Vector2I index)
     {
         BoardSquare boardSquare = BoardSquareScene.Instantiate<BoardSquare>();
+        AddChild(boardSquare);
         boardSquare.SquareSize = BoardSquareLength;
         var i = index.X;
         var j = index.Y;
@@ -68,7 +67,6 @@ public partial class GameBoard : Node3D
         boardSquare.Index = index;
         boardSquare.BasePosition = position;
 
-        GD.Print(boardSquare.TeamColor);
         return boardSquare;
     }
 

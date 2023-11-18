@@ -1,9 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://c87dad0oht0tf"]
+[gd_scene load_steps=2 format=3 uid="uid://c87dad0oht0tf"]
 
 [ext_resource type="Script" path="res://Scenes/Board/GameBoard.cs" id="1_oc3bd"]
-[ext_resource type="PackedScene" uid="uid://btu06rjykkxfp" path="res://Scenes/BoardSquare/square.tscn" id="2_ae1vk"]
 
 [node name="Board" type="Node3D"]
 script = ExtResource("1_oc3bd")
-BoardSquareScene = ExtResource("2_ae1vk")
-BoardEdgeCount = 7
+BoardEdgeCount = 3
