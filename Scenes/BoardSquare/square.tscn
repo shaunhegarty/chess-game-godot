@@ -1,8 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://btu06rjykkxfp"]
+[gd_scene load_steps=8 format=3 uid="uid://btu06rjykkxfp"]
 
 [ext_resource type="Script" path="res://Scenes/BoardSquare/BoardSquare.cs" id="1_3sqja"]
 [ext_resource type="Material" uid="uid://c6m7ytrirmrhx" path="res://Materials/square_black.tres" id="2_idxfl"]
 [ext_resource type="Material" uid="uid://c0lxw4vfs5h7p" path="res://Materials/square_white.tres" id="3_d42c1"]
+[ext_resource type="Script" path="res://Components/DropReceivable.cs" id="4_p1c0h"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_5ttqv"]
 resource_local_to_scene = true
@@ -13,6 +14,9 @@ size = Vector3(1, 0.1, 1)
 font_names = PackedStringArray("Cascadia Code")
 subpixel_positioning = 3
 multichannel_signed_distance_field = true
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_op464"]
+size = Vector3(1, 0.1, 1)
 
 [node name="Square" type="Node3D"]
 transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0, 0)
@@ -31,3 +35,9 @@ font = SubResource("SystemFont_bgsv7")
 outline_size = 10
 horizontal_alignment = 0
 vertical_alignment = 2
+
+[node name="DropReceivable" type="Area3D" parent="."]
+script = ExtResource("4_p1c0h")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="DropReceivable"]
+shape = SubResource("BoxShape3D_op464")
