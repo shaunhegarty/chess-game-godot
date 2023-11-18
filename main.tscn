@@ -1,0 +1,42 @@
+[gd_scene load_steps=8 format=3 uid="uid://b2kjdg002ga6i"]
+
+[ext_resource type="PackedScene" uid="uid://c87dad0oht0tf" path="res://Scenes/Board/Board.tscn" id="1_hqmf8"]
+[ext_resource type="Script" path="res://Scenes/BoardSquare/BoardSquare.cs" id="2_pvkdu"]
+[ext_resource type="Material" uid="uid://c6m7ytrirmrhx" path="res://Materials/square_black.tres" id="3_0pe10"]
+[ext_resource type="Material" uid="uid://c0lxw4vfs5h7p" path="res://Materials/square_white.tres" id="4_oe0x5"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_5ttqv"]
+resource_local_to_scene = true
+material = ExtResource("3_0pe10")
+size = Vector3(1, 0.1, 1)
+
+[sub_resource type="PackedScene" id="PackedScene_cw02m"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Square", "script", "Node3D", "SquareMesh", "mesh", "surface_material_override/0", "MeshInstance3D"),
+"node_count": 2,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 6, 3, -1, 2, 4, 1, 5, 2, 0),
+"variants": [ExtResource("2_pvkdu"), SubResource("BoxMesh_5ttqv"), ExtResource("4_oe0x5")],
+"version": 3
+}
+
+[sub_resource type="Environment" id="Environment_qeaow"]
+
+[node name="Node3D" type="Node3D"]
+
+[node name="Board" parent="." instance=ExtResource("1_hqmf8")]
+BoardSquareScene = SubResource("PackedScene_cw02m")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_qeaow")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(-0.750111, 0.340601, -0.566855, 0, 0.857167, 0.515038, 0.661312, 0.386336, -0.642971, -1.95146, 1.74096, -1.19158)
+current = true
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.692118, 0.721784, 0, -0.721784, 0.692118, 4.67522, 5.54347, 7.48902)

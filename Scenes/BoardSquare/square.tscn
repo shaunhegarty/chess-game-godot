@@ -5,13 +5,12 @@
 [ext_resource type="Material" uid="uid://c0lxw4vfs5h7p" path="res://Materials/square_white.tres" id="2_ylwku"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_5ttqv"]
+resource_local_to_scene = true
 material = ExtResource("2_o0dhx")
 size = Vector3(1, 0.1, 1)
 
 [node name="Square" type="Node3D"]
 script = ExtResource("1_24e0k")
-WhiteMaterial = ExtResource("2_ylwku")
-BlackMaterial = ExtResource("2_o0dhx")
 
 [node name="SquareMesh" type="MeshInstance3D" parent="."]
 mesh = SubResource("BoxMesh_5ttqv")
