@@ -9,8 +9,8 @@ resource_local_to_scene = true
 material = ExtResource("2_idxfl")
 size = Vector3(1, 0.1, 1)
 
-[sub_resource type="SystemFont" id="SystemFont_iivdr"]
-font_names = PackedStringArray("Courier New")
+[sub_resource type="SystemFont" id="SystemFont_bgsv7"]
+font_names = PackedStringArray("Cascadia Code")
 subpixel_positioning = 3
 multichannel_signed_distance_field = true
 
@@ -24,6 +24,10 @@ surface_material_override/0 = ExtResource("3_d42c1")
 
 [node name="Colour" type="Label3D" parent="."]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0.0573381, 0)
-text = "Black"
-font = SubResource("SystemFont_iivdr")
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, -0.410454, 0.057338, 0.478158)
+text = "Black
+A6"
+font = SubResource("SystemFont_bgsv7")
+outline_size = 10
+horizontal_alignment = 0
+vertical_alignment = 2
