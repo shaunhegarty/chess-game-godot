@@ -2,8 +2,11 @@
 
 [ext_resource type="PackedScene" uid="uid://c87dad0oht0tf" path="res://Scenes/Board/Board.tscn" id="1_p7rbk"]
 [ext_resource type="Script" path="res://ChessManager.cs" id="1_s0c2a"]
-[ext_resource type="PackedScene" uid="uid://be1m55vp2w4ej" path="res://Scenes/Piece/GamePiece.tscn" id="2_asof6"]
 [ext_resource type="Texture2D" uid="uid://juqnlipnj00d" path="res://Assets/Environment/small_empty_room_1_1k.hdr" id="3_5bgwb"]
+[ext_resource type="Script" path="res://Components/Dragger.cs" id="5_rd85d"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_kwi2m"]
+size = Vector3(8, 0.01, 8)
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_nscep"]
 panorama = ExtResource("3_5bgwb")
@@ -16,35 +19,37 @@ sky = SubResource("Sky_xnqeh")
 ambient_light_source = 3
 ambient_light_sky_contribution = 0.5
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_kwi2m"]
-size = Vector3(8, 0.01, 8)
-
 [node name="Node3D" type="Node3D"]
 
-[node name="Node" type="Node" parent="."]
+[node name="Managers" type="Node" parent="."]
 
-[node name="ChessManager" type="Node" parent="Node"]
+[node name="ChessManager" type="Node" parent="Managers"]
 script = ExtResource("1_s0c2a")
 
-[node name="Board" parent="." instance=ExtResource("1_p7rbk")]
+[node name="Controls" type="Node" parent="."]
 
-[node name="GamePiece" parent="Board" instance=ExtResource("2_asof6")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.297151, 0)
+[node name="DragPlane" type="Area3D" parent="Controls"]
+collision_layer = 4
+input_ray_pickable = false
 
-[node name="Camera3D" type="Camera3D" parent="."]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Controls/DragPlane"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.37677, 0.277708, 3.55099)
+shape = SubResource("BoxShape3D_kwi2m")
+
+[node name="Dragger" type="Node3D" parent="Controls"]
+script = ExtResource("5_rd85d")
+
+[node name="World" type="Node" parent="."]
+
+[node name="Camera3D" type="Camera3D" parent="World"]
 transform = Transform3D(-4.37114e-08, 0.560523, -0.828139, 0, 0.828139, 0.560523, 1, 2.45013e-08, -3.61991e-08, -1.59611, 1.93817, 3.14604)
 current = true
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="World"]
 transform = Transform3D(-0.95035, -0.185295, -0.25, -0.25, 0.933013, 0.258819, 0.185295, 0.308469, -0.933013, 0, 4, 0)
 shadow_enabled = true
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="World"]
 environment = SubResource("Environment_hft8y")
 
-[node name="Area3D" type="Area3D" parent="."]
-collision_layer = 4
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.37677, 0.690172, 3.55099)
-shape = SubResource("BoxShape3D_kwi2m")
+[node name="Board" parent="." instance=ExtResource("1_p7rbk")]

@@ -10,15 +10,16 @@ public partial class DragAndDroppable : Area3D
     RayCast3D DropRay;
     Vector3 DragInitialPosition;
     bool isDragged = false;
+    GameManager Manager;
 
-    const float RAY_LENGTH = 100;
-    const int DRAG_PLANE_LAYER = 4;  // Collision mask for the drag plane
 
     public override void _Ready()
     {
         PickedObject = GetParent<Node3D>();
         DropRay = MakeRay();
-        
+        Manager = Utils.GetManager(this);
+
+
     }
 
     private RayCast3D MakeRay()
@@ -41,37 +42,16 @@ public partial class DragAndDroppable : Area3D
         {
             if(mouseEvent.IsPressed())
             {
-                GD.Print("Start Dragging");
                 SetDragged(true);
             }
             if(mouseEvent.IsReleased())
             {
-                GD.Print("Release Dragging");
                 SetDragged(false);
             }
         }
     }
 
-    public override void _PhysicsProcess(double delta)
-    {
-        if (Input.IsActionPressed("left_click")) {
-            GD.Print("Dragging");
-            var spaceState = GetWorld3D().DirectSpaceState;
-            var camera = GetViewport().GetCamera3D();
-            var mousePos = GetViewport().GetMousePosition();
-            var origin = camera.ProjectRayOrigin(mousePos);
-            var end = origin + camera.ProjectRayNormal(mousePos) * RAY_LENGTH;
-            var query = PhysicsRayQueryParameters3D.Create(origin, end);
-            query.CollideWithAreas = true;
-            query.CollisionMask = DRAG_PLANE_LAYER;
-            var result = spaceState.IntersectRay(query);
-            bool gotCollisionPoint = result.TryGetValue("position", out var collisionPoint);
-            if (gotCollisionPoint)
-            {
-                UpdatePosition((Vector3)collisionPoint);
-            }
-        }
-    }
+
 
     private void SetDragged(bool IsDragged)
     {
@@ -79,14 +59,15 @@ public partial class DragAndDroppable : Area3D
         if(IsDragged)
         {
             DragInitialPosition = PickedObject.GlobalPosition;
+            Manager.Dragger.PickedDraggable = this;
             DropRay.Enabled = true;
         }
     }
 
-    private void Release()
+    public void Release()
     {
         var collider = DropRay.GetCollider();
-        if (collider != null && collider is DropReceivable)
+        if (collider is not null and DropReceivable)
         {
             var receivable = (DropReceivable)collider;
             UpdatePosition(receivable.GlobalPosition);
@@ -99,7 +80,7 @@ public partial class DragAndDroppable : Area3D
 
     }
 
-    private void UpdatePosition(Vector3 positionUpdate)
+    public void UpdatePosition(Vector3 positionUpdate)
     {
         PickedObject.GlobalPosition = positionUpdate;
     }

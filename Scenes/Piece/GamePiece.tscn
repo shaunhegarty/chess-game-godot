@@ -15,23 +15,25 @@ multichannel_signed_distance_field = true
 size = Vector3(0.3, 0.5, 0.3)
 
 [node name="GamePiece" type="Node3D"]
-transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0, 0)
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0.00250793, 0)
 script = ExtResource("1_bxjjv")
 WhiteMaterial = ExtResource("2_dws0o")
 BlackMaterial = ExtResource("2_q12xd")
 
 [node name="PieceMesh" type="MeshInstance3D" parent="."]
 unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.248154, 0)
 mesh = SubResource("BoxMesh_35ojt")
 surface_material_override/0 = ExtResource("2_dws0o")
 
 [node name="PieceLabel" type="Label3D" parent="."]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.349767, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.597921, 0)
 text = "Pawn"
 font = SubResource("SystemFont_b3job")
 
 [node name="DragAndDroppable" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.248154, 0)
 script = ExtResource("4_b3yec")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="DragAndDroppable"]
