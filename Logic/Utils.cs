@@ -8,4 +8,9 @@ public class Utils
         Vector2 newPosition = (Vector2)targetPosition;
         return oldPosition.DistanceTo(newPosition);
     }
+
+    public static GameManager GetManager(Node node)
+    {
+        return node.GetNode<GameManager>("/root/GameManager");
+    }
 }

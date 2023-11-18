@@ -1,0 +1,14 @@
+{
+  "profiles": {
+    "ChessBoogaloo": {
+      "commandName": "Project"
+    },
+    "Debug": {
+      "commandName": "Executable",
+      "executablePath": "D:\\Installs\\Godot\\Godot_v4.1.1-stable_mono_win64\\Godot_v4.1.1-stable_mono_win64.exe",
+      "commandLineArgs": "--path,--verbose",
+      "workingDirectory": ".",
+      "nativeDebugging": true
+    }
+  }
+}

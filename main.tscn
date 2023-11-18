@@ -1,6 +1,7 @@
-[gd_scene load_steps=7 format=3 uid="uid://b2kjdg002ga6i"]
+[gd_scene load_steps=8 format=3 uid="uid://b2kjdg002ga6i"]
 
 [ext_resource type="PackedScene" uid="uid://c87dad0oht0tf" path="res://Scenes/Board/Board.tscn" id="1_p7rbk"]
+[ext_resource type="Script" path="res://ChessManager.cs" id="1_s0c2a"]
 [ext_resource type="PackedScene" uid="uid://be1m55vp2w4ej" path="res://Scenes/Piece/GamePiece.tscn" id="2_asof6"]
 [ext_resource type="Texture2D" uid="uid://juqnlipnj00d" path="res://Assets/Environment/small_empty_room_1_1k.hdr" id="3_5bgwb"]
 
@@ -16,6 +17,11 @@ ambient_light_source = 3
 ambient_light_sky_contribution = 0.5
 
 [node name="Node3D" type="Node3D"]
+
+[node name="Node" type="Node" parent="."]
+
+[node name="ChessManager" type="Node" parent="Node"]
+script = ExtResource("1_s0c2a")
 
 [node name="Board" parent="." instance=ExtResource("1_p7rbk")]
 

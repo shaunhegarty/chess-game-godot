@@ -26,6 +26,7 @@ namespace Chess
         public bool CheckMate { get { return checkState.isMate; } }
         public string LastMove = "";
 
+        // Callbacks
         public delegate void NextTurnCallback();
         private NextTurnCallback nextTurnCallback;
         public void SetNextTurnCallBack(NextTurnCallback cb) => nextTurnCallback = cb;
@@ -110,10 +111,10 @@ namespace Chess
         {
             LastMove = $"Moved {piece} to {Square.LabelFromPosition(targetPosition)}";
 
-            Square oldSquare = piece.currentSquare;
+            Square oldSquare = piece.CurrentSquare;
             Square targetSquare = GetSquareByPosition(targetPosition);
 
-            piece.AddMove(new Move(oldSquare.position, targetPosition, Turn));
+            piece.AddMove(new Move(oldSquare.Coordinates, targetPosition, Turn));
             // Was that an en passant !?!?
             if (piece.WasLastMovePawnAttack())
             {
@@ -127,9 +128,9 @@ namespace Chess
 
 
             // Was this a castle move?
-            if (piece.type == PieceType.King && Utils.Distance(oldSquare.position, targetSquare.position) == 2)
+            if (piece.type == PieceType.King && Utils.Distance(oldSquare.Coordinates, targetSquare.Coordinates) == 2)
             {
-                DoCastle(piece.team);
+                DoCastle(piece.TeamColor);
             }
 
             piece.PostMove();
@@ -199,7 +200,7 @@ namespace Chess
         public void DoEnPassant(Piece passingPawn)
         {
             Move lastMove = passingPawn.LastMove();
-            int direction = passingPawn.team == Team.Black ? -1 : 1;
+            int direction = passingPawn.TeamColor == Team.Black ? -1 : 1;
             Vector2I attackPosition = lastMove.To - new Vector2I(direction, 0);
             var attackSquare = GetSquareByPosition(attackPosition);
             var attackPiece = attackSquare.occupant;
@@ -222,9 +223,9 @@ namespace Chess
 
             foreach (Piece rook in rooks)
             {
-                if (rook.currentSquare != null)
+                if (rook.CurrentSquare != null)
                 {
-                    float toKing = Utils.Distance(rook.currentSquare.position, king.currentSquare.position);
+                    float toKing = Utils.Distance(rook.CurrentSquare.Coordinates, king.CurrentSquare.Coordinates);
                     if (toKing < distance)
                     {
                         closestRook = rook;
@@ -235,11 +236,11 @@ namespace Chess
 
             if (closestRook != null)
             {
-                Vector2I rookDirection = closestRook.currentSquare.position - king.currentSquare.position;
+                Vector2I rookDirection = closestRook.CurrentSquare.Coordinates - king.CurrentSquare.Coordinates;
                 rookDirection.Y = Math.Sign(rookDirection.Y);  // normalize of sorts
 
-                var targetSquare = GetSquareByPosition(king.currentSquare.position - rookDirection);
-                closestRook.currentSquare.RemovePiece();
+                var targetSquare = GetSquareByPosition(king.CurrentSquare.Coordinates - rookDirection);
+                closestRook.CurrentSquare.RemovePiece();
                 targetSquare.AddPiece(closestRook);
                 closestRook.PostMove();
             }
@@ -265,7 +266,7 @@ namespace Chess
             // Get the opposing King
             var king = GetKing(GetOppositeTeam(team));
 
-            bool isInCheck = coverage.Contains(king.currentSquare);
+            bool isInCheck = coverage.Contains(king.CurrentSquare);
             return isInCheck;
         }
 
@@ -279,7 +280,7 @@ namespace Chess
             // Debug.Log($"Simulating {piece} Moving to {Square.LabelFromPosition(targetPosition)}");
 
             // Update the board state
-            var oldSquare = piece.currentSquare;
+            var oldSquare = piece.CurrentSquare;
             var targetSquare = GetSquareByPosition(targetPosition);
             var pieceAtTarget = targetSquare.occupant;
 
@@ -287,7 +288,7 @@ namespace Chess
             targetSquare.AddPiece(piece);
 
             // Check if move leaves this team in Check            
-            stillInCheck = CalculateCheckAll(GetOppositeTeam(piece.team));
+            stillInCheck = CalculateCheckAll(GetOppositeTeam(piece.TeamColor));
 
             // Rewind the board state
             targetSquare.RemovePiece();
@@ -313,7 +314,7 @@ namespace Chess
             foreach (var piece in teamPieces)
             {
                 // Don't bother with pieces which have been taken
-                if (piece.currentSquare == null)
+                if (piece.CurrentSquare == null)
                 {
                     continue;
                 }
@@ -323,7 +324,7 @@ namespace Chess
                 // simulate each move, and see if it still results in check
                 foreach (var move in allowedSquares)
                 {
-                    SimulateMove(piece, move.position, out bool stillInCheck);
+                    SimulateMove(piece, move.Coordinates, out bool stillInCheck);
                     if (!stillInCheck)
                     {
                         return false;
@@ -359,13 +360,13 @@ namespace Chess
         public Piece PromotePawn(Piece pawn, PieceType promotion)
         {
             GD.Print($"Promoting to {promotion}");
-            var square = pawn.currentSquare;
-            var position = pawn.currentSquare.position;
+            var square = pawn.CurrentSquare;
+            var position = pawn.CurrentSquare.Coordinates;
             var moveHistory = pawn.MovesList;
-            AddPieceToBoard(promotion, pawn.team, position);
+            AddPieceToBoard(promotion, pawn.TeamColor, position);
             square.occupant.MovesList = moveHistory;
 
-            pieces.TryGetValue(pawn.team, out var teamPieces);
+            pieces.TryGetValue(pawn.TeamColor, out var teamPieces);
             teamPieces.Remove(pawn);
             pawn.PostMove();
 
@@ -387,11 +388,11 @@ namespace Chess
 
     public class Square
     {
-        public Vector2I position;
+        public Vector2I Coordinates;
         public SquareState state;
         public Piece occupant;
 
-        public string Label { get { return LabelFromPosition(position); } }
+        public string Label { get { return LabelFromPosition(Coordinates); } }
 
         public static string LabelFromPosition(Vector2I pos)
         {
@@ -400,14 +401,14 @@ namespace Chess
 
         public Square(int x, int y)
         {
-            position = new Vector2I(x, y);
+            Coordinates = new Vector2I(x, y);
         }
 
         public void AddPiece(Piece piece)
         {
             occupant = piece;
             state = SquareState.Occupied;
-            piece.currentSquare = this;
+            piece.CurrentSquare = this;
         }
 
         public void RemovePiece()
@@ -415,7 +416,7 @@ namespace Chess
             state = SquareState.Empty;
             if (occupant != null)
             {
-                occupant.currentSquare = null;
+                occupant.CurrentSquare = null;
                 occupant = null;
             }
         }
@@ -456,13 +457,13 @@ namespace Chess
     {
         // Inputs
         public PieceType type;
-        public Team team;
+        public Team TeamColor;
         public Movement PieceMovement { get; private set; }
 
         public ChessGame Game;
 
         // State
-        public Square currentSquare;
+        public Square CurrentSquare;
         public int MoveCount { get { return movesList.Count; } }
         public List<Square> allowedSquares;
 
@@ -497,7 +498,7 @@ namespace Chess
         public Piece(PieceType pieceType, Team pieceTeam, ChessGame game)
         {
             type = pieceType;
-            team = pieceTeam;
+            TeamColor = pieceTeam;
             PieceMovement = Movement.GetMovement(type);
             Game = game;
         }
@@ -510,18 +511,18 @@ namespace Chess
 
         public List<Square> GetValidSquares(bool simulate)
         {
-            if (currentSquare == null)
+            if (CurrentSquare == null)
             {
                 return new();
             }
-            var moves = PieceMovement.GetValidSquares(Game.board, currentSquare.position);
+            var moves = PieceMovement.GetValidSquares(Game.board, CurrentSquare.Coordinates);
             if (simulate)
             {
 
                 List<Square> slimMoves = new();
                 foreach (var move in moves)
                 {
-                    Game.SimulateMove(this, move.position, out bool InCheck);
+                    Game.SimulateMove(this, move.Coordinates, out bool InCheck);
                     if (!InCheck)
                     {
                         slimMoves.Add(move);
@@ -542,28 +543,28 @@ namespace Chess
         private List<Square> GetCastleMoves()
         {
             List<Square> castleMoves = new();
-            if (!Game.IsTeamInCheck(team) && type == PieceType.King && MoveCount == 0)
+            if (!Game.IsTeamInCheck(TeamColor) && type == PieceType.King && MoveCount == 0)
             {
-                foreach (Piece rook in Game.GetRooks(team))
+                foreach (Piece rook in Game.GetRooks(TeamColor))
                 {
                     if (rook.MoveCount == 0)
                     {
                         // Get the rook direction
-                        Vector2I rookDirection = rook.currentSquare.position - currentSquare.position;
+                        Vector2I rookDirection = rook.CurrentSquare.Coordinates - CurrentSquare.Coordinates;
                         rookDirection.Y = Math.Sign(rookDirection.Y);
 
                         // check each space on the way to the rook
                         bool allowed = true;
                         for (int i = 1; i <= 2 && allowed; i++)
                         {
-                            Square interSquare = Game.board.GetSquare(currentSquare.position - i * rookDirection);
+                            Square interSquare = Game.board.GetSquare(CurrentSquare.Coordinates - i * rookDirection);
                             if (interSquare.state == SquareState.Occupied)
                             {
                                 allowed = false;
                             }
                             if (allowed)
                             {
-                                Game.SimulateMove(this, interSquare.position, out bool InCheck);
+                                Game.SimulateMove(this, interSquare.Coordinates, out bool InCheck);
                                 if (InCheck)
                                 {
                                     allowed = false;
@@ -572,7 +573,7 @@ namespace Chess
                         }
                         if (allowed)
                         {
-                            castleMoves.Add(Game.board.GetSquare(currentSquare.position - 2 * rookDirection));
+                            castleMoves.Add(Game.board.GetSquare(CurrentSquare.Coordinates - 2 * rookDirection));
                         }
                     }
                 }
@@ -582,7 +583,7 @@ namespace Chess
 
         public override string ToString()
         {
-            return $"{team} {type} @ {currentSquare}";
+            return $"{TeamColor} {type} @ {CurrentSquare}";
         }
 
         public void AddMove(Move move)
@@ -608,7 +609,7 @@ namespace Chess
                 if (lastMove != null)
                 {
                     // This direction stuff is getting reused, should probably abstract it away a bit.
-                    Vector2I teamDirection = new(team == Team.Black ? -1 : 1, 1);
+                    Vector2I teamDirection = new(TeamColor == Team.Black ? -1 : 1, 1);
                     PawnMovement movement = (PawnMovement)PieceMovement;
                     return movement.attackMoves.Contains(lastMove.Direction * teamDirection);
                 }
@@ -619,8 +620,8 @@ namespace Chess
 
         public bool IsPromotablePawn()
         {
-            int backRow = team == Team.White ? 7 : 0;
-            return type == PieceType.Pawn && currentSquare.position.X == backRow;
+            int backRow = TeamColor == Team.White ? 7 : 0;
+            return type == PieceType.Pawn && CurrentSquare.Coordinates.X == backRow;
         }
     }
 

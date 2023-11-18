@@ -22,11 +22,16 @@ public partial class GameBoard : Node3D
         }
     }
 
-    private List<BoardSquare> Squares;
+    public List<BoardSquare> Squares;
+    public Dictionary<Vector2I, BoardSquare> SquaresMap;
 
     public override void _Ready()
     {
+        GameManager manager = Utils.GetManager(this);
+        manager.RegisterGameBoard(this);
         BuildBoard();
+        manager.ChessManager.SetupPieces();
+
     }
 
     private void ClearBoard()
@@ -36,11 +41,13 @@ public partial class GameBoard : Node3D
                 child.QueueFree();
             }
         }
+        Squares = new();
+        SquaresMap = new();
     }
 
     private void BuildBoard()
     {
-        Squares = new();
+        
         ClearBoard();
 
         for (int j = 0; j < BoardEdgeCount; j++)
@@ -48,13 +55,13 @@ public partial class GameBoard : Node3D
             for (int i = 0; i < BoardEdgeCount; i++)
             {
                 Vector2I index = new(j, i);
-                BoardSquare boardSquare = CreateSquare(index);
-                Squares.Add(boardSquare);
+                AddSquare(index);
+                
             }
         }
     }
 
-    private BoardSquare CreateSquare(Vector2I index)
+    private BoardSquare AddSquare(Vector2I index)
     {
         BoardSquare boardSquare = BoardSquareScene.Instantiate<BoardSquare>();
         AddChild(boardSquare);
@@ -67,7 +74,29 @@ public partial class GameBoard : Node3D
         boardSquare.BasePosition = position;
         boardSquare.TeamColor = (i + j) % 2 == 0 ? Team.Black : Team.White;
 
+        Squares.Add(boardSquare);
+        SquaresMap.Add(index, boardSquare);
+
         return boardSquare;
+    }
+
+    public BoardSquare GetSquare(int x, int y) {
+        return SquaresMap[new(x, y)];
+    }
+
+    public BoardSquare GetSquare(Vector2I coordinates)
+    {
+        return SquaresMap[coordinates];
+    }
+
+    public List<BoardSquare> SquaresToBoardSquares(List<Square> squares)
+    {
+        List<BoardSquare> boardSquares = new();
+        foreach (Square square in squares)
+        {
+            boardSquares.Add(GetSquare(square.Coordinates));
+        }
+        return boardSquares;
     }
 
 }

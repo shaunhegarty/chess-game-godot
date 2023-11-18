@@ -5,12 +5,13 @@
 [ext_resource type="Material" uid="uid://c6m7ytrirmrhx" path="res://Materials/square_black.tres" id="2_q12xd"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_35ojt"]
-size = Vector3(0.5, 0.5, 0.5)
+size = Vector3(0.3, 0.5, 0.3)
 
 [sub_resource type="SystemFont" id="SystemFont_b3job"]
 multichannel_signed_distance_field = true
 
 [node name="GamePiece" type="Node3D"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0, 0)
 script = ExtResource("1_bxjjv")
 WhiteMaterial = ExtResource("2_dws0o")
 BlackMaterial = ExtResource("2_q12xd")

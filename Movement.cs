@@ -61,12 +61,12 @@ namespace Rules
                 for (int i = 1; i <= board.size; i++)
                 {
                     Chess.Square square = SquareFromIndex(board, startLocation + direction * i);
-                    if (square != null && (square.occupant == null || square.occupant.team != currentSquare.occupant.team))
+                    if (square != null && (square.occupant == null || square.occupant.TeamColor != currentSquare.occupant.TeamColor))
                     {
                         allowed.Add(square);
 
                         // Include an enemy square so that we can attack it, but don't go any further. 
-                        if (square.occupant != null && square.occupant.team != currentSquare.occupant.team)
+                        if (square.occupant != null && square.occupant.TeamColor != currentSquare.occupant.TeamColor)
                         {
                             break;
                         }
@@ -185,7 +185,7 @@ namespace Rules
             Piece currentPiece = currentSquare.occupant;
 
             // Adjust direction based on Team
-            Vector2I direction = new(currentPiece.team == Team.Black ? -1 : 1, 1);
+            Vector2I direction = new(currentPiece.TeamColor == Team.Black ? -1 : 1, 1);
 
             Square baseMoveSquare = SquareFromIndex(board, startLocation + baseMove * direction);
             bool baseMoveBlocked = false;
@@ -210,7 +210,7 @@ namespace Rules
             foreach (Vector2I attackMove in attackMoves)
             {
                 Square attackMoveSquare = SquareFromIndex(board, startLocation + attackMove * direction);
-                if (attackMoveSquare != null && attackMoveSquare.occupant != null && attackMoveSquare.occupant.team != currentPiece.team)
+                if (attackMoveSquare != null && attackMoveSquare.occupant != null && attackMoveSquare.occupant.TeamColor != currentPiece.TeamColor)
                 {
                     allowed.Add(attackMoveSquare);
                 }
@@ -220,7 +220,7 @@ namespace Rules
             {
                 Vector2I enPassantMove = enPassantMoves[i];
                 Square enPassantMoveSquare = SquareFromIndex(board, startLocation + enPassantMove * direction);
-                if (enPassantMoveSquare != null && enPassantMoveSquare.occupant != null && enPassantMoveSquare.occupant.team != currentPiece.team
+                if (enPassantMoveSquare != null && enPassantMoveSquare.occupant != null && enPassantMoveSquare.occupant.TeamColor != currentPiece.TeamColor
                     && enPassantMoveSquare.occupant.EnPassantable)
                 {
                     // Add the corresponding attack move, because chess!

@@ -1,6 +1,5 @@
 using Chess;
 using Godot;
-using System;
 using System.Collections.Generic;
 
 [Tool]
@@ -13,7 +12,7 @@ public partial class GamePiece : Node3D
 	private Label3D _label;
 
     // Settings
-    public Vector3 PositionOffset = new(0, 1f, 0);
+    public Vector3 PositionOffset = new(0, 0.3f, 0);
     private Team _teamColor = Team.White;
 
     // Type
@@ -63,16 +62,15 @@ public partial class GamePiece : Node3D
 
     public void UpdatePosition()
     {
-        if (ChessPiece.currentSquare != null)
+        if (ChessPiece.CurrentSquare != null)
         {
-            int rowIndex = ChessPiece.currentSquare.position.X;
-            int colIndex = ChessPiece.currentSquare.position.Y;
-            //BoardSquare square = MainManager.Instance.ChessManager.Board.AllSquares[rowIndex][colIndex];
-            //SetPositionToTargetSquare(square);
+            GameManager manager = Utils.GetManager(this);
+            BoardSquare boardSquare = manager.Board.GetSquare(ChessPiece.CurrentSquare.Coordinates);
+            SetPositionToTargetSquare(boardSquare);
         }
         else
         {
-            //PieceAttacked();
+            PieceAttacked();
         }
 
     }
@@ -85,7 +83,34 @@ public partial class GamePiece : Node3D
     public void SetPiece(Chess.Piece piece)
     {
         ChessPiece = piece;
+        _label.Text = $"{piece.type}";
         piece.SetOnMoveCallback(UpdatePosition);
+    }
+
+    public void SetPositionToTargetSquare(BoardSquare square)
+    {
+        CurrentSquare?.SetOccupant(null);
+        SetSquare(square);
+        square.Occupant?.PieceAttacked();
+        square.SetOccupant(this);
+        SetPositionToTargetSquare();
+    }
+
+    void SetPositionToTargetSquare()
+    {
+        Position = CurrentSquare.Position + PositionOffset;                
+    }
+
+    public void PieceAttacked()
+    {
+        Visible = false;
+    }
+    
+    private List<BoardSquare> GetValidSquares()
+    {
+        var squares = ChessPiece.GetValidSquares(simulate: true);
+        AllowedSquares = Utils.GetManager(this).Board.SquaresToBoardSquares(squares);
+        return AllowedSquares;
     }
 
 }

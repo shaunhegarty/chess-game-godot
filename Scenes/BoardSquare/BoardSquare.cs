@@ -10,6 +10,7 @@ public partial class BoardSquare : Node3D
     private MeshInstance3D _mesh;
 	private Vector3 _basePosition;
 	public Vector2I Coordinates;
+	public GamePiece Occupant;
 
 	private Material WhiteMaterial = ResourceLoader.Load<Material>("res://Materials/square_white.tres");
     private Material BlackMaterial = ResourceLoader.Load<Material>("res://Materials/square_black.tres");
@@ -73,7 +74,13 @@ public partial class BoardSquare : Node3D
         _mesh.SetSurfaceOverrideMaterial(0, material);
     }
 
-	public string CoordinateString()
+    public void SetOccupant(GamePiece piece)
+    {
+        Occupant = piece;
+    }
+
+
+    public string CoordinateString()
 	{
         char letter = (char)('A' + Coordinates.X);
         return $"{letter}{Coordinates.Y + 1}";
