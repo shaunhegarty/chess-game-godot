@@ -6,10 +6,12 @@ using System.Collections.Generic;
 public partial class GamePiece : Node3D
 {
     private bool _setupComplete = false;
+    private GameManager Manager;
 
     // Children
 	private MeshInstance3D _mesh;
 	private Label3D _label;
+    private DragAndDroppable _dragAndDroppable;
 
     // Settings
     public Vector3 PositionOffset = new(0, 0, 0);
@@ -36,11 +38,17 @@ public partial class GamePiece : Node3D
     [Export] private Material WhiteMaterial;
 	[Export] private Material BlackMaterial;
 
+    private ChessGame Game => Manager.ChessManager.Game;
+
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
 		_mesh = GetNode<MeshInstance3D>("%PieceMesh");
 		_label = GetNode<Label3D>("%PieceLabel");
+        _dragAndDroppable = GetNode<DragAndDroppable>("%DragAndDroppable");
+        _dragAndDroppable.Dropped += OnPiecePlaced;
+        Manager = Utils.GetManager(this);
+
         _setupComplete = true;
 	}
 
@@ -72,6 +80,10 @@ public partial class GamePiece : Node3D
         {
             PieceAttacked();
         }
+    }
+
+    public void UpdateHighlight()
+    {
 
     }
 
@@ -98,19 +110,44 @@ public partial class GamePiece : Node3D
 
     void SetPositionToTargetSquare()
     {
-        Position = CurrentSquare.Position + PositionOffset;                
+        Position = CurrentSquare.Position;                
     }
 
     public void PieceAttacked()
     {
         Visible = false;
     }
-    
+
+    private bool IsMyTurn => TeamColor == Manager.ChessManager.Game.TeamTurn && !Manager.ChessManager.Game.CheckMate;
+
     private List<BoardSquare> GetValidSquares()
     {
         var squares = ChessPiece.GetValidSquares(simulate: true);
         AllowedSquares = Utils.GetManager(this).Board.SquaresToBoardSquares(squares);
         return AllowedSquares;
+    }
+
+    private void OnPiecePlaced(DropReceivable targetArea)
+    {
+        if (IsMyTurn)
+        {
+            //HighlightCandidateSquares(false);
+            GetValidSquares();
+
+            var boardSquare = targetArea.GetParent<BoardSquare>();
+            if (boardSquare != null && AllowedSquares.Contains(boardSquare))
+            {
+                HighlightedSquare = boardSquare;
+                SetPositionToTargetSquare(HighlightedSquare);
+                Game.MovePiece(ChessPiece, HighlightedSquare.Coordinates);
+                return;
+
+            } 
+        }
+        
+        
+        SetPositionToTargetSquare();
+        
     }
 
 }

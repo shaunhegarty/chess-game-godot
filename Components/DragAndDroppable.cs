@@ -5,12 +5,15 @@ public partial class DragAndDroppable : Area3D
 {
     [Signal]
     public delegate void DroppedEventHandler(DropReceivable target);
+    [Signal]
+    public delegate void HighlightingEventHandler(DropReceivable target);
 
     Node3D PickedObject;
     RayCast3D DropRay;
     Vector3 DragInitialPosition;
     bool isDragged = false;
     GameManager Manager;
+    DropReceivable HighlightingObject;
 
 
     public override void _Ready()
@@ -70,7 +73,7 @@ public partial class DragAndDroppable : Area3D
         if (collider is not null and DropReceivable)
         {
             var receivable = (DropReceivable)collider;
-            UpdatePosition(receivable.GlobalPosition);
+            EmitSignal(SignalName.Dropped, receivable);
         }
         else
         {
@@ -83,6 +86,35 @@ public partial class DragAndDroppable : Area3D
     public void UpdatePosition(Vector3 positionUpdate)
     {
         PickedObject.GlobalPosition = positionUpdate;
+    }
+
+    public void UpdateHighlightedSquare()
+    {
+        var collider = DropRay.GetCollider();
+        if (collider is not null and DropReceivable)
+        {
+            var receivable = (DropReceivable)collider;
+            EmitSignal(SignalName.Dropped, receivable);
+        }
+        else
+        {
+            PickedObject.GlobalPosition = DragInitialPosition;
+        }
+        DropRay.Enabled = false;
+    }
+
+    public override void _PhysicsProcess(double delta)
+    {
+        if(DropRay.Enabled)
+        {
+            var collider = DropRay.GetCollider();
+            if (collider != HighlightingObject)
+            {
+                HighlightingObject = (DropReceivable) collider;
+                EmitSignal(SignalName.Highlighting, HighlightingObject);
+            } 
+
+        }
     }
 
 }
