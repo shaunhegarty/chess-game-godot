@@ -12,7 +12,7 @@ public partial class GamePiece : Node3D
 	private Label3D _label;
 
     // Settings
-    public Vector3 PositionOffset = new(0, 0.3f, 0);
+    public Vector3 PositionOffset = new(0, 0, 0);
     private Team _teamColor = Team.White;
 
     // Type
