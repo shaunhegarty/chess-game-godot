@@ -85,7 +85,6 @@ public partial class BoardSquare : Node3D
     private void SetMaterialFromTeam()
     {
         _shader.SetShaderParameter("base_color", Utils.TeamColor(TeamColor));
-        //_mesh.SetInstanceShaderParameter("base_color", Utils.TeamColor(TeamColor));
     }
 
     static Color Unhighlighted = new(0.1f, 0.1f, 0.1f);

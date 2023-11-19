@@ -69,6 +69,8 @@ public partial class DragAndDroppable : Area3D
 
     public void Release()
     {
+        HighlightingObject?.Unhighlight();
+
         var collider = DropRay.GetCollider();
         if (collider is not null and DropReceivable)
         {
