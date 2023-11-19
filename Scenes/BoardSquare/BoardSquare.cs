@@ -72,14 +72,11 @@ public partial class BoardSquare : Node3D
         _highlight = ((ShaderMaterial)_shader.NextPass);
         _label = GetNode<Label3D>("%Colour");
 
-        try
+        if (!Engine.IsEditorHint())
         {
             _dropReceivable = GetNode<DropReceivable>("%DropReceivable");
             _dropReceivable.Highlighted += () => SetHover(true);
             _dropReceivable.Unhighlighted += () => SetHover(false);
-        } catch (InvalidCastException e)
-        {
-            GD.PrintErr($"{Name} | {e}");
         }
         _setupComplete = true;
     }

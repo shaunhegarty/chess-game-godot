@@ -58,7 +58,8 @@ namespace Rules
             foreach (Vector2I direction in directions)
             {
                 Chess.Square currentSquare = SquareFromIndex(board, startLocation);
-                for (int i = 1; i <= board.size; i++)
+                int directionRange = range == 0 ? board.size : range;
+                for (int i = 1; i <= Mathf.Min(board.size, directionRange); i++)
                 {
                     Chess.Square square = SquareFromIndex(board, startLocation + direction * i);
                     if (square != null && (square.occupant == null || square.occupant.TeamColor != currentSquare.occupant.TeamColor))
