@@ -101,8 +101,8 @@ public partial class BoardSquare : Node3D
     static Color HighlightedInvalid = new(0.8f, 0.2f, 0.2f);
     static Color HighlightedHover = new(1f, 1f, 0);
     const float HighlightDuration = 0.1f;
-    bool Hovering = false;
-    bool Valid = false;
+    bool isHovering = false;
+    bool isValid = false;
 
     private Color GetColorForState()
     {
@@ -111,13 +111,13 @@ public partial class BoardSquare : Node3D
             return Unhighlighted;
         }
 
-        if(Valid && !Hovering)
+        if(isValid && !isHovering)
         {
             return HighlightedValid;
-        } else if (Valid && Hovering)
+        } else if (isValid && isHovering)
         {
             return HighlightedHover;
-        } else if (!Valid && Hovering)
+        } else if (!isValid && isHovering)
         {
             return HighlightedInvalid;
         } else
@@ -133,16 +133,24 @@ public partial class BoardSquare : Node3D
         tween.TweenMethod(Callable.From<Color>(SetHighlightColor), GetHighlightColor(), targetColor, HighlightDuration);
     }
 
+    private void DoLift()
+    {
+        Vector3 targetPosition = isHovering && isValid ? Position + new Vector3(0, 0.1f, 0) : BasePosition;
+        Tween tween = GetTree().CreateTween();
+        tween.TweenProperty(this, "position", targetPosition, 0.2f);
+    }
+
     private void SetHover(bool highlighted)
     {
-        Hovering = highlighted;
+        isHovering = highlighted;
         DoHighlight();
+        DoLift();
         
     }
 
     public void SetValid(bool valid)
     {
-        Valid = valid;
+        isValid = valid;
         DoHighlight();
     }
 
