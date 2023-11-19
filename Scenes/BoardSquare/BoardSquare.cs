@@ -4,18 +4,20 @@ using Godot;
 [Tool]
 public partial class BoardSquare : Node3D
 {
+	// Settings
 	private Team _teamColor = Team.White;
 	private float _squareSize = 1;
+
+	// Children
 	private Label3D _label;
     private MeshInstance3D _mesh;
+
+	// State
 	private Vector3 _basePosition;
 	public Vector2I Coordinates;
 	public GamePiece Occupant;
-
-	private Material WhiteMaterial = ResourceLoader.Load<Material>("res://Materials/square_white.tres");
-    private Material BlackMaterial = ResourceLoader.Load<Material>("res://Materials/square_black.tres");
-
 	private bool _setupComplete = false;
+
 
 	public Vector3 BasePosition
 	{
@@ -64,14 +66,13 @@ public partial class BoardSquare : Node3D
 		if (_setupComplete)
 		{
 			SetMaterialFromTeam();
-			_label.Text = $"{TeamColor}\n{CoordinateString()}";
+			_label.Text = $"{CoordinateString()}";
 		}
 	}
 
 	private void SetMaterialFromTeam()
 	{
-        Material material = TeamColor == Team.White ? WhiteMaterial : BlackMaterial;
-        _mesh.SetSurfaceOverrideMaterial(0, material);
+        _mesh.SetSurfaceOverrideMaterial(0, Utils.TeamMaterial(TeamColor));
     }
 
     public void SetOccupant(GamePiece piece)

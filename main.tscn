@@ -42,7 +42,7 @@ script = ExtResource("5_rd85d")
 [node name="World" type="Node" parent="."]
 
 [node name="Camera3D" type="Camera3D" parent="World"]
-transform = Transform3D(-4.37114e-08, 0.560523, -0.828139, 0, 0.828139, 0.560523, 1, 2.45013e-08, -3.61991e-08, -1.59611, 1.93817, 3.14604)
+transform = Transform3D(-4.37114e-08, 0.965926, -0.258819, 0, 0.258819, 0.965926, 1, 4.2222e-08, -1.13133e-08, 1.2, 5.5, 3.5)
 current = true
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="World"]

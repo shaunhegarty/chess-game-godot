@@ -35,9 +35,6 @@ public partial class GamePiece : Node3D
         }
     }
 
-    [Export] private Material WhiteMaterial;
-	[Export] private Material BlackMaterial;
-
     private ChessGame Game => Manager.ChessManager.Game;
 
 	// Called when the node enters the scene tree for the first time.
@@ -64,8 +61,7 @@ public partial class GamePiece : Node3D
 
     private void SetMaterialFromTeam()
     {
-        Material material = TeamColor == Team.White ? WhiteMaterial : BlackMaterial;
-        _mesh.SetSurfaceOverrideMaterial(0, material);
+        _mesh.SetSurfaceOverrideMaterial(0, Utils.TeamMaterial(TeamColor));
     }
 
     public void UpdatePosition()
