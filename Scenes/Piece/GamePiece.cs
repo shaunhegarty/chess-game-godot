@@ -42,9 +42,13 @@ public partial class GamePiece : Node3D
 	{
 		_mesh = GetNode<MeshInstance3D>("%PieceMesh");
 		_label = GetNode<Label3D>("%PieceLabel");
-        _dragAndDroppable = GetNode<DragAndDroppable>("%DragAndDroppable");
-        _dragAndDroppable.Selected += OnPieceSelected;
-        _dragAndDroppable.Dropped += OnPiecePlaced;
+
+        if (!Engine.IsEditorHint())
+        {
+            _dragAndDroppable = GetNode<DragAndDroppable>("%DragAndDroppable");
+            _dragAndDroppable.Selected += OnPieceSelected;
+            _dragAndDroppable.Dropped += OnPiecePlaced;
+        }
         Manager = Utils.GetManager(this);
 
         _setupComplete = true;
