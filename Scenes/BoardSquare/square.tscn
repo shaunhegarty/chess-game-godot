@@ -1,13 +1,25 @@
-[gd_scene load_steps=8 format=3 uid="uid://btu06rjykkxfp"]
+[gd_scene load_steps=12 format=3 uid="uid://cxbqbd5853nqp"]
 
 [ext_resource type="Script" path="res://Scenes/BoardSquare/BoardSquare.cs" id="1_3sqja"]
-[ext_resource type="Material" uid="uid://c6m7ytrirmrhx" path="res://Materials/square_black.tres" id="2_idxfl"]
-[ext_resource type="Material" uid="uid://c0lxw4vfs5h7p" path="res://Materials/square_white.tres" id="3_d42c1"]
+[ext_resource type="Shader" path="res://Scenes/BoardSquare/HighlightOverlay.gdshader" id="2_8hvti"]
+[ext_resource type="Shader" path="res://Scenes/BoardSquare/BaseShader.gdshader" id="2_s27jr"]
 [ext_resource type="Script" path="res://Components/DropReceivable.cs" id="4_p1c0h"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_lgdin"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("2_8hvti")
+shader_parameter/highlight_color = Color(0, 0, 0, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_kh6ey"]
+resource_local_to_scene = true
+render_priority = 0
+next_pass = SubResource("ShaderMaterial_lgdin")
+shader = ExtResource("2_s27jr")
+shader_parameter/base_color = Color(1, 1, 1, 1)
 
 [sub_resource type="BoxMesh" id="BoxMesh_5ttqv"]
 resource_local_to_scene = true
-material = ExtResource("2_idxfl")
 size = Vector3(1, 0.1, 1)
 
 [sub_resource type="SystemFont" id="SystemFont_bgsv7"]
@@ -18,13 +30,21 @@ multichannel_signed_distance_field = true
 [sub_resource type="BoxShape3D" id="BoxShape3D_op464"]
 size = Vector3(1, 0.1, 1)
 
+[sub_resource type="Animation" id="Animation_d4mwx"]
+resource_name = "highlight"
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_eq37v"]
+_data = {
+"highlight": SubResource("Animation_d4mwx")
+}
+
 [node name="Square" type="Node3D"]
 transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0, 0)
 script = ExtResource("1_3sqja")
 
 [node name="SquareMesh" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_kh6ey")
 mesh = SubResource("BoxMesh_5ttqv")
-surface_material_override/0 = ExtResource("3_d42c1")
 
 [node name="Colour" type="Label3D" parent="."]
 unique_name_in_owner = true
@@ -37,8 +57,14 @@ horizontal_alignment = 0
 vertical_alignment = 2
 
 [node name="DropReceivable" type="Area3D" parent="."]
+unique_name_in_owner = true
 collision_layer = 2
 script = ExtResource("4_p1c0h")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="DropReceivable"]
 shape = SubResource("BoxShape3D_op464")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_eq37v")
+}

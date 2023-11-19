@@ -24,4 +24,9 @@ public class Utils
         Material material = team == Team.White ? WhiteMaterial : BlackMaterial;
         return material;
     }
+
+    public static Color TeamColor(Team team)
+    {
+        return team == Team.White ? new(1, 1, 1) : new(0, 0, 0);
+    }
 }

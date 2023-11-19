@@ -73,6 +73,7 @@ public partial class GameBoard : Node3D
         boardSquare.Coordinates = index;
         boardSquare.BasePosition = position;
         boardSquare.TeamColor = (i + j) % 2 == 0 ? Team.Black : Team.White;
+        boardSquare.Name = boardSquare.CoordinateString();
 
         Squares.Add(boardSquare);
         SquaresMap.Add(index, boardSquare);

@@ -88,21 +88,6 @@ public partial class DragAndDroppable : Area3D
         PickedObject.GlobalPosition = positionUpdate;
     }
 
-    public void UpdateHighlightedSquare()
-    {
-        var collider = DropRay.GetCollider();
-        if (collider is not null and DropReceivable)
-        {
-            var receivable = (DropReceivable)collider;
-            EmitSignal(SignalName.Dropped, receivable);
-        }
-        else
-        {
-            PickedObject.GlobalPosition = DragInitialPosition;
-        }
-        DropRay.Enabled = false;
-    }
-
     public override void _PhysicsProcess(double delta)
     {
         if(DropRay.Enabled)
@@ -110,8 +95,10 @@ public partial class DragAndDroppable : Area3D
             var collider = DropRay.GetCollider();
             if (collider != HighlightingObject)
             {
+                
+                HighlightingObject?.Unhighlight();
                 HighlightingObject = (DropReceivable) collider;
-                EmitSignal(SignalName.Highlighting, HighlightingObject);
+                HighlightingObject.Highlight();
             } 
 
         }
