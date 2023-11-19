@@ -96,10 +96,10 @@ public partial class BoardSquare : Node3D
         _shader.SetShaderParameter("base_color", Utils.TeamColor(TeamColor));
     }
 
-    static Color Unhighlighted = new(0.1f, 0.1f, 0.1f);
-    static Color HighlightedValid = new(0.2f, 0.8f, 0.2f);
-    static Color HighlightedInvalid = new(0.8f, 0.2f, 0.2f);
-    static Color HighlightedHover = new(1f, 1f, 0);
+    static Color Unhighlighted = new(0.1f, 0.1f, 0.1f, 0);
+    static Color HighlightedValid = new(0.2f, 0.8f, 0.2f, 0.7f);
+    static Color HighlightedInvalid = new(0.8f, 0.2f, 0.2f, 0.5f);
+    static Color HighlightedHover = new(1f, 1f, 0, 0.7f);
     const float HighlightDuration = 0.1f;
     bool isHovering = false;
     bool isValid = false;

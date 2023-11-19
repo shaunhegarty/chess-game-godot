@@ -1,9 +1,9 @@
 shader_type spatial;
-render_mode unshaded, depth_draw_never, blend_mix;
+render_mode depth_draw_never, blend_mix;
 
-uniform vec3 highlight_color: source_color;
+uniform vec4 highlight_color: source_color;
 
 void fragment() {
-  ALBEDO = highlight_color;
-  ALPHA = 0.5f;
+  ALBEDO = highlight_color.rgb;
+  ALPHA = highlight_color.a;
 }

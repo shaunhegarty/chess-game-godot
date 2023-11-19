@@ -9,7 +9,7 @@
 resource_local_to_scene = true
 render_priority = 0
 shader = ExtResource("2_8hvti")
-shader_parameter/highlight_color = Color(0, 0, 0, 1)
+shader_parameter/highlight_color = Color(0, 0, 0, 0)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_kh6ey"]
 resource_local_to_scene = true
