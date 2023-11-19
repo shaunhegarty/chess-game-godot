@@ -65,7 +65,6 @@ public partial class BoardSquare : Node3D
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
-        Manager = Utils.GetManager(this);
 
         _mesh = GetNode<MeshInstance3D>("SquareMesh");
         _shader = ((ShaderMaterial)_mesh.MaterialOverride);
@@ -74,6 +73,7 @@ public partial class BoardSquare : Node3D
 
         if (!Engine.IsEditorHint())
         {
+            Manager = Utils.GetManager(this);
             _dropReceivable = GetNode<DropReceivable>("%DropReceivable");
             _dropReceivable.Highlighted += () => SetHover(true);
             _dropReceivable.Unhighlighted += () => SetHover(false);

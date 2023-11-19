@@ -204,7 +204,7 @@ namespace Chess
             Vector2I attackPosition = lastMove.To - new Vector2I(direction, 0);
             var attackSquare = GetSquareByPosition(attackPosition);
             var attackPiece = attackSquare.occupant;
-            if (attackPiece.EnPassantable)
+            if (attackPiece != null && attackPiece.EnPassantable)
             {
                 attackSquare.RemovePiece();
                 attackPiece.PostMove();
@@ -475,6 +475,7 @@ namespace Chess
         {
             get
             {
+                // Must be a pawn, who moved 2 spaces, 1 turn ago.
                 if (type != PieceType.Pawn)
                 {
                     return false;

@@ -79,10 +79,6 @@ public partial class GamePiece : Node3D
         }
     }
 
-    public void UpdateHighlight()
-    {
-
-    }
 
     public void SetSquare(BoardSquare square)
     {
