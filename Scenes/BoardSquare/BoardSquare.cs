@@ -5,6 +5,9 @@ using System;
 [Tool]
 public partial class BoardSquare : Node3D
 {
+    // Global
+    GameManager Manager;
+
     // Settings
     private Team _teamColor = Team.White;
     private float _squareSize = 1;
@@ -62,6 +65,8 @@ public partial class BoardSquare : Node3D
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
+        Manager = Utils.GetManager(this);
+
         _mesh = GetNode<MeshInstance3D>("SquareMesh");
         _shader = ((ShaderMaterial)_mesh.MaterialOverride);
         _highlight = ((ShaderMaterial)_shader.NextPass);
@@ -104,6 +109,11 @@ public partial class BoardSquare : Node3D
 
     private Color GetColorForState()
     {
+        if(Manager.CurrentPiece != null && Manager.CurrentPiece.CurrentSquare == this)
+        {
+            return Unhighlighted;
+        }
+
         if(Valid && !Hovering)
         {
             return HighlightedValid;

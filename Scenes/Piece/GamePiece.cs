@@ -128,6 +128,7 @@ public partial class GamePiece : Node3D
     {
         if (IsMyTurn)
         {
+            Manager.CurrentPiece = this;
             GetValidSquares();
             foreach (BoardSquare square in AllowedSquares)   {
                 square.SetValid(true);
@@ -137,6 +138,8 @@ public partial class GamePiece : Node3D
 
     private void OnPiecePlaced(DropReceivable targetArea)
     {
+        Manager.CurrentPiece = null;
+
         if (AllowedSquares != null)
         {
             foreach (BoardSquare square in AllowedSquares)

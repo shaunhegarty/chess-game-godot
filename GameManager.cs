@@ -5,6 +5,7 @@ public partial class GameManager : Node
     public GameBoard Board;
     public ChessManager ChessManager;
     public Dragger Dragger;
+    public GamePiece CurrentPiece;
 
     public void RegisterGameBoard(GameBoard board)
     {
@@ -19,5 +20,10 @@ public partial class GameManager : Node
     public void RegisterDragger(Dragger dragger)
     {
         Dragger = dragger;
+    }
+
+    public void SetSelectedPiece(GamePiece piece)
+    {
+        CurrentPiece = piece;
     }
 }

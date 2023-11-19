@@ -45,15 +45,15 @@ public partial class DragAndDroppable : Area3D
         {
             if(mouseEvent.IsPressed())
             {
-                SetDragged(true);
+                SetDragged();
             }
         }
     }
 
 
 
-    private void SetDragged(bool IsDragged)
-    {
+    private void SetDragged()
+    {        
         DragInitialPosition = PickedObject.GlobalPosition;
         Manager.Dragger.PickedDraggable = this;
         DropRay.Enabled = true;
