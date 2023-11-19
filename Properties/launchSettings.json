@@ -3,9 +3,16 @@
     "ChessBoogaloo": {
       "commandName": "Project"
     },
-    "Debug": {
+    "Debug Desktop": {
       "commandName": "Executable",
       "executablePath": "D:\\Installs\\Godot\\Godot_v4.1.1-stable_mono_win64\\Godot_v4.1.1-stable_mono_win64.exe",
+      "commandLineArgs": "--path,--verbose",
+      "workingDirectory": ".",
+      "nativeDebugging": true
+    },
+    "Debug Laptop": {
+      "commandName": "Executable",
+      "executablePath": "C:\\Installs\\Godot_v4.1.1-stable_mono_win64\\Godot_v4.1.1-stable_mono_win64.exe",
       "commandLineArgs": "--path,--verbose",
       "workingDirectory": ".",
       "nativeDebugging": true

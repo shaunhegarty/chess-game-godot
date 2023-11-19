@@ -43,6 +43,7 @@ public partial class GamePiece : Node3D
 		_mesh = GetNode<MeshInstance3D>("%PieceMesh");
 		_label = GetNode<Label3D>("%PieceLabel");
         _dragAndDroppable = GetNode<DragAndDroppable>("%DragAndDroppable");
+        _dragAndDroppable.Selected += OnPieceSelected;
         _dragAndDroppable.Dropped += OnPiecePlaced;
         Manager = Utils.GetManager(this);
 
@@ -123,8 +124,27 @@ public partial class GamePiece : Node3D
         return AllowedSquares;
     }
 
+    private void OnPieceSelected()
+    {
+        if (IsMyTurn)
+        {
+            GetValidSquares();
+            foreach (BoardSquare square in AllowedSquares)   {
+                square.SetValid(true);
+            }
+        }
+    }
+
     private void OnPiecePlaced(DropReceivable targetArea)
     {
+        if (AllowedSquares != null)
+        {
+            foreach (BoardSquare square in AllowedSquares)
+            {
+                square.SetValid(false);
+            }
+        }
+
         if (IsMyTurn)
         {
             //HighlightCandidateSquares(false);

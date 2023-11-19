@@ -1,5 +1,6 @@
 using Chess;
 using Godot;
+using System;
 
 [Tool]
 public partial class BoardSquare : Node3D
@@ -66,9 +67,15 @@ public partial class BoardSquare : Node3D
         _highlight = ((ShaderMaterial)_shader.NextPass);
         _label = GetNode<Label3D>("%Colour");
 
-        _dropReceivable = GetNode<DropReceivable>("%DropReceivable");
-        _dropReceivable.Highlighted += () => SetHighlighted(true);
-        _dropReceivable.Unhighlighted += () => SetHighlighted(false);
+        try
+        {
+            _dropReceivable = GetNode<DropReceivable>("%DropReceivable");
+            _dropReceivable.Highlighted += () => SetHover(true);
+            _dropReceivable.Unhighlighted += () => SetHover(false);
+        } catch (InvalidCastException e)
+        {
+            GD.PrintErr($"{Name} | {e}");
+        }
         _setupComplete = true;
     }
 
@@ -88,20 +95,48 @@ public partial class BoardSquare : Node3D
     }
 
     static Color Unhighlighted = new(0.1f, 0.1f, 0.1f);
-    static Color HighlightedValid = new(1f, 1f, 0);
+    static Color HighlightedValid = new(0.2f, 0.8f, 0.2f);
+    static Color HighlightedInvalid = new(0.8f, 0.2f, 0.2f);
+    static Color HighlightedHover = new(1f, 1f, 0);
     const float HighlightDuration = 0.1f;
+    bool Hovering = false;
+    bool Valid = false;
 
-    private void SetHighlighted(bool highlighted)
+    private Color GetColorForState()
     {
-        if (highlighted)
+        if(Valid && !Hovering)
         {
-            Tween tween = GetTree().CreateTween();
-            tween.TweenMethod(Callable.From<Color>(SetHighlightColor), GetHighlightColor(), HighlightedValid, HighlightDuration);
+            return HighlightedValid;
+        } else if (Valid && Hovering)
+        {
+            return HighlightedHover;
+        } else if (!Valid && Hovering)
+        {
+            return HighlightedInvalid;
         } else
         {
-            Tween tween = GetTree().CreateTween();
-            tween.TweenMethod(Callable.From<Color>(SetHighlightColor), GetHighlightColor(), Unhighlighted, HighlightDuration);
+            return Unhighlighted;
         }
+    }
+
+    private void DoHighlight()
+    {
+        Color targetColor = GetColorForState();
+        Tween tween = GetTree().CreateTween();
+        tween.TweenMethod(Callable.From<Color>(SetHighlightColor), GetHighlightColor(), targetColor, HighlightDuration);
+    }
+
+    private void SetHover(bool highlighted)
+    {
+        Hovering = highlighted;
+        DoHighlight();
+        
+    }
+
+    public void SetValid(bool valid)
+    {
+        Valid = valid;
+        DoHighlight();
     }
 
     private void SetHighlightColor(Color color)

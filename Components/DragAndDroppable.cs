@@ -6,7 +6,7 @@ public partial class DragAndDroppable : Area3D
     [Signal]
     public delegate void DroppedEventHandler(DropReceivable target);
     [Signal]
-    public delegate void HighlightingEventHandler(DropReceivable target);
+    public delegate void SelectedEventHandler();
 
     Node3D PickedObject;
     RayCast3D DropRay;
@@ -47,10 +47,6 @@ public partial class DragAndDroppable : Area3D
             {
                 SetDragged(true);
             }
-            if(mouseEvent.IsReleased())
-            {
-                SetDragged(false);
-            }
         }
     }
 
@@ -58,13 +54,10 @@ public partial class DragAndDroppable : Area3D
 
     private void SetDragged(bool IsDragged)
     {
-        isDragged = IsDragged;
-        if(IsDragged)
-        {
-            DragInitialPosition = PickedObject.GlobalPosition;
-            Manager.Dragger.PickedDraggable = this;
-            DropRay.Enabled = true;
-        }
+        DragInitialPosition = PickedObject.GlobalPosition;
+        Manager.Dragger.PickedDraggable = this;
+        DropRay.Enabled = true;
+        EmitSignal(SignalName.Selected);
     }
 
     public void Release()
@@ -100,7 +93,7 @@ public partial class DragAndDroppable : Area3D
                 
                 HighlightingObject?.Unhighlight();
                 HighlightingObject = (DropReceivable) collider;
-                HighlightingObject.Highlight();
+                HighlightingObject?.Highlight();
             } 
 
         }
