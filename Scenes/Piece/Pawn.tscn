@@ -1,0 +1,39 @@
+[gd_scene load_steps=7 format=3 uid="uid://dcoo3rnebsati"]
+
+[ext_resource type="Script" path="res://Scenes/Piece/GamePiece.cs" id="1_qt4gl"]
+[ext_resource type="Material" uid="uid://c0lxw4vfs5h7p" path="res://Materials/square_white.tres" id="2_6dq2g"]
+[ext_resource type="ArrayMesh" uid="uid://c2r21shrem86e" path="res://Assets/Pieces/pawn.res" id="2_qoe3p"]
+[ext_resource type="Script" path="res://Components/DragAndDroppable.cs" id="3_4el73"]
+
+[sub_resource type="SystemFont" id="SystemFont_b3job"]
+font_names = PackedStringArray("DejaVu Math TeX Gyre")
+multichannel_signed_distance_field = true
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_qj5px"]
+size = Vector3(0.3, 0.5, 0.3)
+
+[node name="GamePiece" type="Node3D"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0.00250793, 0)
+script = ExtResource("1_qt4gl")
+
+[node name="PieceMesh" type="MeshInstance3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0.10102, 0)
+mesh = ExtResource("2_qoe3p")
+surface_material_override/0 = ExtResource("2_6dq2g")
+
+[node name="PieceLabel" type="Label3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.597921, 0)
+billboard = 1
+text = "Pawn"
+font = SubResource("SystemFont_b3job")
+outline_size = 6
+
+[node name="DragAndDroppable" type="Area3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.248154, 0)
+script = ExtResource("3_4el73")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="DragAndDroppable"]
+shape = SubResource("BoxShape3D_qj5px")
