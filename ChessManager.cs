@@ -10,6 +10,13 @@ public partial class ChessManager : Node
     public Transform3D pieceParent;
     private PackedScene _pieceScene = ResourceLoader.Load<PackedScene>("res://Scenes/Piece/GamePiece.tscn");
 
+    private PackedScene _pawnScene = ResourceLoader.Load<PackedScene>("res://Scenes/Piece/Pawn.tscn");
+    private PackedScene _rookScene = ResourceLoader.Load<PackedScene>("res://Scenes/Piece/Rook.tscn");
+    private PackedScene _knightScene = ResourceLoader.Load<PackedScene>("res://Scenes/Piece/Knight.tscn");
+    private PackedScene _bishopScene = ResourceLoader.Load<PackedScene>("res://Scenes/Piece/Bishop.tscn");
+    private PackedScene _kingScene = ResourceLoader.Load<PackedScene>("res://Scenes/Piece/King.tscn");
+    private PackedScene _queenScene = ResourceLoader.Load<PackedScene>("res://Scenes/Piece/Queen.tscn");
+
     // public GameUIManager UIManager;
 
     // Settings
@@ -60,7 +67,7 @@ public partial class ChessManager : Node
 
     public void SpawnPiece(Piece chessPiece)
     {
-        GamePiece piece = _pieceScene.Instantiate<GamePiece>();
+        GamePiece piece = GetSceneForPiece(chessPiece).Instantiate<GamePiece>();
         AddChild(piece);
         piece.TeamColor = chessPiece.TeamColor;
         piece.SetPiece(chessPiece);
@@ -75,5 +82,19 @@ public partial class ChessManager : Node
         var targetSquare = Board.GetSquare(chessPiece.CurrentSquare.Coordinates);
         piece.SetPositionToTargetSquare(targetSquare);
 
+    }
+
+    private PackedScene GetSceneForPiece(Piece chessPiece)
+    {
+        switch(chessPiece.type)
+        {
+            case PieceType.Pawn: return _pawnScene;
+            case PieceType.Rook: return _rookScene;
+            case PieceType.Knight: return _knightScene;
+            case PieceType.Bishop: return _bishopScene;
+            case PieceType.Queen: return _queenScene;
+            case PieceType.King: return _kingScene;
+            default: return _pieceScene;
+        }
     }
 }
