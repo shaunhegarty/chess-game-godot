@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=3 uid="uid://b32bypumoqow5"]
 
 [ext_resource type="Script" path="res://Scenes/Piece/GamePiece.cs" id="1_akldk"]
-[ext_resource type="ArrayMesh" uid="uid://c8ctftrvgm64" path="res://Assets/Pieces/king.res" id="2_hgi5x"]
+[ext_resource type="ArrayMesh" uid="uid://bqg6u3x81bqes" path="res://Assets/Pieces/queen.res" id="2_k242e"]
 [ext_resource type="Material" uid="uid://c0lxw4vfs5h7p" path="res://Materials/square_white.tres" id="3_o4yh1"]
 [ext_resource type="Script" path="res://Components/DragAndDroppable.cs" id="4_32hph"]
 
@@ -10,7 +10,7 @@ font_names = PackedStringArray("DejaVu Math TeX Gyre")
 multichannel_signed_distance_field = true
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_qj5px"]
-size = Vector3(0.3, 0.5, 0.3)
+size = Vector3(0.577625, 1.51288, 0.578884)
 
 [node name="GamePiece" type="Node3D"]
 transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0.00250793, 0)
@@ -18,16 +18,16 @@ script = ExtResource("1_akldk")
 
 [node name="PieceMesh" type="MeshInstance3D" parent="."]
 unique_name_in_owner = true
-transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0.10102, 0)
-mesh = ExtResource("2_hgi5x")
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0.223821, 0)
+mesh = ExtResource("2_k242e")
 surface_material_override/0 = ExtResource("3_o4yh1")
 
 [node name="PieceLabel" type="Label3D" parent="."]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.597921, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.24971, 0)
 billboard = 1
 no_depth_test = true
-text = "King"
+text = "Queen"
 font = SubResource("SystemFont_b3job")
 outline_size = 6
 
@@ -37,4 +37,5 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.248154, 0)
 script = ExtResource("4_32hph")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="DragAndDroppable"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.499616, 0)
 shape = SubResource("BoxShape3D_qj5px")

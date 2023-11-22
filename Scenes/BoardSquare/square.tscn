@@ -43,12 +43,13 @@ transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0, 
 script = ExtResource("1_3sqja")
 
 [node name="SquareMesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.0504467, 0)
 material_override = SubResource("ShaderMaterial_kh6ey")
 mesh = SubResource("BoxMesh_5ttqv")
 
 [node name="Colour" type="Label3D" parent="."]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, -0.410454, 0.057338, 0.478158)
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, -0.410454, -0.000333339, 0.478158)
 text = "Black
 A6"
 font = SubResource("SystemFont_bgsv7")
@@ -58,6 +59,7 @@ vertical_alignment = 2
 
 [node name="DropReceivable" type="Area3D" parent="."]
 unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.0504467, 0)
 collision_layer = 2
 script = ExtResource("4_p1c0h")
 

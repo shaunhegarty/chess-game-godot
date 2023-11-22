@@ -10,7 +10,7 @@ font_names = PackedStringArray("DejaVu Math TeX Gyre")
 multichannel_signed_distance_field = true
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_qj5px"]
-size = Vector3(0.3, 0.5, 0.3)
+size = Vector3(0.374809, 1.12245, 0.445425)
 
 [node name="GamePiece" type="Node3D"]
 transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0.00250793, 0)
@@ -18,15 +18,16 @@ script = ExtResource("1_wh510")
 
 [node name="PieceMesh" type="MeshInstance3D" parent="."]
 unique_name_in_owner = true
-transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0.10102, 0)
+transform = Transform3D(0.18, 0, 0, 0, 0.18, 0, 0, 0, 0.18, 0, 0.185784, 0)
 mesh = ExtResource("2_hmk8x")
 surface_material_override/0 = ExtResource("3_2kbg4")
 
 [node name="PieceLabel" type="Label3D" parent="."]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.597921, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.28606, 0)
 billboard = 1
-text = "Pawn"
+text = "Rook
+"
 font = SubResource("SystemFont_b3job")
 outline_size = 6
 
@@ -36,4 +37,5 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.248154, 0)
 script = ExtResource("4_hm5ft")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="DragAndDroppable"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.267255, 0)
 shape = SubResource("BoxShape3D_qj5px")
