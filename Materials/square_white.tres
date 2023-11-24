@@ -2,3 +2,8 @@
 
 [resource]
 resource_name = "SquareWhite"
+albedo_color = Color(1, 0.878431, 0.701961, 1)
+metallic_specular = 1.0
+roughness = 0.5
+clearcoat_enabled = true
+clearcoat_roughness = 0.0
