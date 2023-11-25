@@ -35,8 +35,12 @@ public partial class ChessManager : Node
 
     public override void _Ready()
     {
-        Manager = Utils.GetManager(this);
-        Manager.RegisterChessManager(this);
+        if (!Engine.IsEditorHint())
+        {
+            Manager = Utils.GetManager(this);
+            Manager.RegisterChessManager(this);
+        }
+        
         Game = new ChessGame();
 
         Game.SetupBoard();

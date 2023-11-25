@@ -27,10 +27,10 @@ public partial class GameBoard : Node3D
 
     public override void _Ready()
     {
-        GameManager manager = Utils.GetManager(this);
         BuildBoard();
         if(!Engine.IsEditorHint())
         {
+            GameManager manager = Utils.GetManager(this);
             manager.RegisterGameBoard(this);
             manager.ChessManager.SetupPieces();
         }
