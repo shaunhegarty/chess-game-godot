@@ -139,6 +139,7 @@ public partial class GamePiece : Node3D
     private void OnPiecePlaced(DropReceivable targetArea)
     {
         Manager.CurrentPiece = null;
+        //Manager.ChessUI.SetPawnForPromotion(ChessPiece);
 
         if (AllowedSquares != null)
         {

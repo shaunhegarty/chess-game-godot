@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://b2x1cnja7yowu"]
+[gd_scene load_steps=15 format=3 uid="uid://b2x1cnja7yowu"]
 
 [ext_resource type="PackedScene" uid="uid://c87dad0oht0tf" path="res://Scenes/Board/Board.tscn" id="1_p7rbk"]
 [ext_resource type="Script" path="res://ChessManager.cs" id="1_s0c2a"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" path="res://Camera.cs" id="3_p068c"]
 [ext_resource type="Script" path="res://Scenes/UI/ChessUI.cs" id="5_oc1g3"]
 [ext_resource type="Script" path="res://Components/Dragger.cs" id="5_rd85d"]
+[ext_resource type="Script" path="res://Scenes/UI/PromotionUI.cs" id="7_bonn3"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_kwi2m"]
 size = Vector3(8, 0.01, 8)
@@ -39,6 +40,9 @@ corner_radius_top_left = 5
 corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6n3jo"]
+bg_color = Color(0.65098, 0, 0.0470588, 1)
 
 [node name="Node3D" type="Node3D"]
 
@@ -105,3 +109,47 @@ theme_override_fonts/font = SubResource("SystemFont_yqq7w")
 theme_override_font_sizes/font_size = 32
 theme_override_styles/normal = SubResource("StyleBoxFlat_cmco3")
 text = "Restart"
+
+[node name="PromotionContainer" type="PanelContainer" parent="CanvasLayer"]
+unique_name_in_owner = true
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("7_bonn3")
+
+[node name="CenterContainer" type="CenterContainer" parent="CanvasLayer/PromotionContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/PromotionContainer/CenterContainer"]
+layout_mode = 2
+
+[node name="Bishop" type="Button" parent="CanvasLayer/PromotionContainer/CenterContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Bishop"
+
+[node name="Knight" type="Button" parent="CanvasLayer/PromotionContainer/CenterContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Knight
+"
+
+[node name="Rook" type="Button" parent="CanvasLayer/PromotionContainer/CenterContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Rook
+"
+
+[node name="Queen" type="Button" parent="CanvasLayer/PromotionContainer/CenterContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Queen"
+
+[node name="Cancel" type="Button" parent="CanvasLayer/PromotionContainer/CenterContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_6n3jo")
+text = "Cancel"

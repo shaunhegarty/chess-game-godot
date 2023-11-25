@@ -17,29 +17,31 @@ public partial class ChessManager : Node
     private PackedScene _kingScene = ResourceLoader.Load<PackedScene>("res://Scenes/Piece/King.tscn");
     private PackedScene _queenScene = ResourceLoader.Load<PackedScene>("res://Scenes/Piece/Queen.tscn");
 
-    // public GameUIManager UIManager;
+    public GameManager Manager;
 
     // Settings
     public int boardSize = 8;
 
     public ChessGame Game { get; private set; }
 
-    public Dictionary<Team, List<GamePiece>> teams = new() {
+    public Dictionary<Team, List<GamePiece>> Teams = new() {
         { Team.White, new()},
         { Team.Black, new()}
     };
 
-    public Dictionary<Team, HashSet<BoardSquare>> teamCoverage;
+    public Dictionary<Team, HashSet<BoardSquare>> TeamCoverage;
+    public Dictionary<Piece, GamePiece> PieceMap = new();
+
 
     public override void _Ready()
     {
-        Utils.GetManager(this).RegisterChessManager(this);
+        Manager = Utils.GetManager(this);
+        Manager.RegisterChessManager(this);
         Game = new ChessGame();
 
         Game.SetupBoard();
         // Game.SetupStalemateBoard();
         Game.SetNextTurnCallBack(UpdateInfo);
-        //Game.SetPromotionCallback(UIManager.SetPawnForPromotion);
 
         UpdateInfo();
     }
@@ -76,25 +78,39 @@ public partial class ChessManager : Node
         //piece.transform.parent.parent = pieceParent;
 
         // Add piece to appropriate team list. 
-        teams.TryGetValue(piece.TeamColor, out List<GamePiece> teamPieces);
+        Teams.TryGetValue(piece.TeamColor, out List<GamePiece> teamPieces);
         teamPieces.Add(piece);
-        GD.Print($"{chessPiece} | {chessPiece.CurrentSquare} | {chessPiece.CurrentSquare.Coordinates}");
+
+        // Make it easy to get a given gamepiece from a chess piece
+        PieceMap.Add(piece.ChessPiece, piece);
+        
+        //GD.Print($"{chessPiece} | {chessPiece.CurrentSquare} | {chessPiece.CurrentSquare.Coordinates}");
         var targetSquare = Board.GetSquare(chessPiece.CurrentSquare.Coordinates);
         piece.SetPositionToTargetSquare(targetSquare);
 
     }
 
+    public GamePiece GetGamePieceFromInternal(Piece internalPiece)
+    {
+        return PieceMap[internalPiece];
+    }
+
     private PackedScene GetSceneForPiece(Piece chessPiece)
     {
-        switch(chessPiece.type)
+        return GetSceneForPieceType(chessPiece.type);
+    }
+
+    public PackedScene GetSceneForPieceType(PieceType pieceType)
+    {
+        return pieceType switch
         {
-            case PieceType.Pawn: return _pawnScene;
-            case PieceType.Rook: return _rookScene;
-            case PieceType.Knight: return _knightScene;
-            case PieceType.Bishop: return _bishopScene;
-            case PieceType.Queen: return _queenScene;
-            case PieceType.King: return _kingScene;
-            default: return _pieceScene;
-        }
+            PieceType.Pawn => _pawnScene,
+            PieceType.Rook => _rookScene,
+            PieceType.Knight => _knightScene,
+            PieceType.Bishop => _bishopScene,
+            PieceType.Queen => _queenScene,
+            PieceType.King => _kingScene,
+            _ => _pieceScene,
+        };
     }
 }
