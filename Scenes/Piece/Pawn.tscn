@@ -19,8 +19,8 @@ script = ExtResource("1_qt4gl")
 [node name="PieceMesh" type="MeshInstance3D" parent="."]
 unique_name_in_owner = true
 transform = Transform3D(0.15, 0, 0, 0, 0.15, 0, 0, 0, 0.15, 0, 0.141993, 0)
+material_override = ExtResource("2_6dq2g")
 mesh = ExtResource("2_qoe3p")
-surface_material_override/0 = ExtResource("2_6dq2g")
 
 [node name="PieceLabel" type="Label3D" parent="."]
 unique_name_in_owner = true

@@ -6,6 +6,8 @@ public class Utils
 
     private static readonly Material WhiteMaterial = ResourceLoader.Load<Material>("res://Materials/square_white.tres");
     private static readonly Material BlackMaterial = ResourceLoader.Load<Material>("res://Materials/square_black.tres");
+    private static readonly ShaderMaterial OutlineMaterial = ResourceLoader.Load<ShaderMaterial>("res://Materials/selected_highlight_material.tres");
+    private static readonly StandardMaterial3D PieceMaterial = ResourceLoader.Load<StandardMaterial3D>("res://Materials/piece_material.tres");
 
     public static float Distance(Vector2I originPosition, Vector2I targetPosition)
     {
@@ -28,5 +30,15 @@ public class Utils
     public static Color TeamColor(Team team)
     {
         return team == Team.White ? new(1, 1, 1) : new(0, 0, 0);
+    }
+
+    public static ShaderMaterial GetOutlineMaterial()
+    {
+        return OutlineMaterial;
+    }
+
+    public static StandardMaterial3D GetPieceMaterial()
+    {
+        return PieceMaterial;
     }
 }

@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://Scenes/Piece/GamePiece.cs" id="1_h1jrt"]
 [ext_resource type="ArrayMesh" uid="uid://c8ctftrvgm64" path="res://Assets/Pieces/king.res" id="2_3arko"]
-[ext_resource type="Material" uid="uid://c0lxw4vfs5h7p" path="res://Materials/square_white.tres" id="3_asb80"]
+[ext_resource type="Material" uid="uid://ci71fuy3rhlki" path="res://Materials/piece_material.tres" id="2_ww8e4"]
 [ext_resource type="Script" path="res://Components/DragAndDroppable.cs" id="4_3me5s"]
 
 [sub_resource type="SystemFont" id="SystemFont_b3job"]
@@ -19,8 +19,8 @@ script = ExtResource("1_h1jrt")
 [node name="PieceMesh" type="MeshInstance3D" parent="."]
 unique_name_in_owner = true
 transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0.223231, 0)
+material_override = ExtResource("2_ww8e4")
 mesh = ExtResource("2_3arko")
-surface_material_override/0 = ExtResource("3_asb80")
 
 [node name="PieceLabel" type="Label3D" parent="."]
 unique_name_in_owner = true

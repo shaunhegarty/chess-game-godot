@@ -13,6 +13,10 @@ public partial class GamePiece : Node3D
 	private Label3D _label;
     private DragAndDroppable _dragAndDroppable;
 
+    // Material
+    private StandardMaterial3D _shader;
+    private ShaderMaterial _highlight;
+
     // Settings
     public Vector3 PositionOffset = new(0, 0, 0);
     private Team _teamColor = Team.White;
@@ -42,7 +46,11 @@ public partial class GamePiece : Node3D
 	{
 		_mesh = GetNode<MeshInstance3D>("%PieceMesh");
 		_label = GetNode<Label3D>("%PieceLabel");
-        
+
+        _shader = (StandardMaterial3D) Utils.GetPieceMaterial().Duplicate(subresources: true);
+        _mesh.MaterialOverride = _shader;
+        _highlight = (ShaderMaterial)_shader.NextPass;
+
 
         if (!Engine.IsEditorHint())
         {
@@ -68,7 +76,7 @@ public partial class GamePiece : Node3D
 
     private void SetMaterialFromTeam()
     {
-        _mesh.SetSurfaceOverrideMaterial(0, Utils.TeamMaterial(TeamColor));
+        _shader.AlbedoColor = Utils.TeamColor(TeamColor);
     }
 
     public void UpdatePosition()
@@ -117,6 +125,11 @@ public partial class GamePiece : Node3D
         Visible = false;
     }
 
+    public void Highlight(bool highlight)
+    {
+        _highlight.SetShaderParameter("enabled", highlight);
+    }
+
     private bool IsMyTurn => TeamColor == Manager.ChessManager.Game.TeamTurn && !Manager.ChessManager.Game.CheckMate;
 
     private List<BoardSquare> GetValidSquares()
@@ -131,6 +144,7 @@ public partial class GamePiece : Node3D
         if (IsMyTurn)
         {
             Manager.CurrentPiece = this;
+            Highlight(true);
             GetValidSquares();
             foreach (BoardSquare square in AllowedSquares)   {
                 square.SetValid(true);
@@ -140,6 +154,7 @@ public partial class GamePiece : Node3D
 
     private void OnPiecePlaced(DropReceivable targetArea)
     {
+        Highlight(false);
         Manager.CurrentPiece = null;
         //Manager.ChessUI.SetPawnForPromotion(ChessPiece);
 

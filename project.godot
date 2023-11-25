@@ -23,6 +23,10 @@ GameManager="*res://GameManager.cs"
 
 project/assembly_name="ChessBoogaloo"
 
+[filesystem]
+
+import/blender/enabled=false
+
 [input]
 
 left_click={

@@ -1,0 +1,13 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://ci71fuy3rhlki"]
+
+[ext_resource type="Material" uid="uid://q0tkbqldlmcp" path="res://Materials/selected_highlight_material.tres" id="1_hbvw5"]
+
+[resource]
+resource_local_to_scene = true
+resource_name = "SquareWhite"
+next_pass = ExtResource("1_hbvw5")
+albedo_color = Color(1, 0.878431, 0.701961, 1)
+metallic_specular = 1.0
+roughness = 0.5
+clearcoat_enabled = true
+clearcoat_roughness = 0.0

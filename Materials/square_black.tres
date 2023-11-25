@@ -1,6 +1,10 @@
-[gd_resource type="StandardMaterial3D" format=3 uid="uid://c6m7ytrirmrhx"]
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://c6m7ytrirmrhx"]
+
+[ext_resource type="Material" uid="uid://q0tkbqldlmcp" path="res://Materials/selected_highlight_material.tres" id="1_tbppx"]
 
 [resource]
+resource_local_to_scene = true
+next_pass = ExtResource("1_tbppx")
 albedo_color = Color(0.156863, 0.0627451, 0, 1)
 roughness = 0.8
 clearcoat_enabled = true

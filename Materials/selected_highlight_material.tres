@@ -1,0 +1,13 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://q0tkbqldlmcp"]
+
+[ext_resource type="Shader" path="res://Materials/selection_highlight.gdshader" id="1_wxjl5"]
+
+[resource]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("1_wxjl5")
+shader_parameter/outline_width = 0.8
+shader_parameter/base_color = Color(1, 0.462745, 0.262745, 1)
+shader_parameter/enabled = false
+shader_parameter/fresnel_factor = 1.0
+shader_parameter/fresnel_step = 0.5
