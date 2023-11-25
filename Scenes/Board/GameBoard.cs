@@ -5,7 +5,7 @@ using System.Collections.Generic;
 [Tool]
 public partial class GameBoard : Node3D
 {
-    private PackedScene BoardSquareScene = ResourceLoader.Load<PackedScene>("res://Scenes/BoardSquare/Square.tscn");
+    private PackedScene BoardSquareScene = ResourceLoader.Load<PackedScene>("res://Scenes/BoardSquare/BoardSquare.tscn");
     private int _boardEdgeCount = 8;
 
     [Export] private int BoardSquareLength = 1;

@@ -1,12 +1,11 @@
-[gd_scene load_steps=15 format=3 uid="uid://b2x1cnja7yowu"]
+[gd_scene load_steps=11 format=3 uid="uid://b2x1cnja7yowu"]
 
 [ext_resource type="PackedScene" uid="uid://c87dad0oht0tf" path="res://Scenes/Board/Board.tscn" id="1_p7rbk"]
 [ext_resource type="Script" path="res://ChessManager.cs" id="1_s0c2a"]
 [ext_resource type="Texture2D" uid="uid://juqnlipnj00d" path="res://Assets/Environment/small_empty_room_1_1k.hdr" id="3_5bgwb"]
 [ext_resource type="Script" path="res://Camera.cs" id="3_p068c"]
-[ext_resource type="Script" path="res://Scenes/UI/ChessUI.cs" id="5_oc1g3"]
 [ext_resource type="Script" path="res://Components/Dragger.cs" id="5_rd85d"]
-[ext_resource type="Script" path="res://Scenes/UI/PromotionUI.cs" id="7_bonn3"]
+[ext_resource type="PackedScene" uid="uid://bfwyu4dk8b8f0" path="res://Scenes/UI/GameUI.tscn" id="6_vhl11"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_kwi2m"]
 size = Vector3(8, 0.01, 8)
@@ -28,21 +27,6 @@ ssil_enabled = true
 sdfgi_enabled = true
 sdfgi_bounce_feedback = 0.4
 sdfgi_energy = 3.0
-
-[sub_resource type="SystemFont" id="SystemFont_yqq7w"]
-font_names = PackedStringArray("Cascadia Code")
-multichannel_signed_distance_field = true
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cmco3"]
-content_margin_left = 15.0
-content_margin_right = 15.0
-corner_radius_top_left = 5
-corner_radius_top_right = 5
-corner_radius_bottom_right = 5
-corner_radius_bottom_left = 5
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6n3jo"]
-bg_color = Color(0.65098, 0, 0.0470588, 1)
 
 [node name="Node3D" type="Node3D"]
 
@@ -82,74 +66,4 @@ environment = SubResource("Environment_hft8y")
 
 [node name="Board" parent="." instance=ExtResource("1_p7rbk")]
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
-script = ExtResource("5_oc1g3")
-
-[node name="GameInfo" type="Label" parent="CanvasLayer"]
-unique_name_in_owner = true
-offset_right = 40.0
-offset_bottom = 23.0
-
-[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer"]
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_top = -78.0
-offset_right = 202.0
-grow_vertical = 0
-theme_override_constants/margin_left = 20
-theme_override_constants/margin_top = 20
-theme_override_constants/margin_right = 20
-theme_override_constants/margin_bottom = 20
-
-[node name="RestartButton" type="Button" parent="CanvasLayer/MarginContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_fonts/font = SubResource("SystemFont_yqq7w")
-theme_override_font_sizes/font_size = 32
-theme_override_styles/normal = SubResource("StyleBoxFlat_cmco3")
-text = "Restart"
-
-[node name="PromotionContainer" type="PanelContainer" parent="CanvasLayer"]
-unique_name_in_owner = true
-visible = false
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-script = ExtResource("7_bonn3")
-
-[node name="CenterContainer" type="CenterContainer" parent="CanvasLayer/PromotionContainer"]
-layout_mode = 2
-
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/PromotionContainer/CenterContainer"]
-layout_mode = 2
-
-[node name="Bishop" type="Button" parent="CanvasLayer/PromotionContainer/CenterContainer/VBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Bishop"
-
-[node name="Knight" type="Button" parent="CanvasLayer/PromotionContainer/CenterContainer/VBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Knight
-"
-
-[node name="Rook" type="Button" parent="CanvasLayer/PromotionContainer/CenterContainer/VBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Rook
-"
-
-[node name="Queen" type="Button" parent="CanvasLayer/PromotionContainer/CenterContainer/VBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Queen"
-
-[node name="Cancel" type="Button" parent="CanvasLayer/PromotionContainer/CenterContainer/VBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_styles/normal = SubResource("StyleBoxFlat_6n3jo")
-text = "Cancel"
+[node name="CanvasLayer" parent="." instance=ExtResource("6_vhl11")]

@@ -1,0 +1,91 @@
+[gd_scene load_steps=6 format=3 uid="uid://bfwyu4dk8b8f0"]
+
+[ext_resource type="Script" path="res://Scenes/UI/ChessUI.cs" id="1_5gs2i"]
+[ext_resource type="Script" path="res://Scenes/UI/PromotionUI.cs" id="2_bvaq3"]
+
+[sub_resource type="SystemFont" id="SystemFont_yqq7w"]
+font_names = PackedStringArray("Cascadia Code")
+multichannel_signed_distance_field = true
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cmco3"]
+content_margin_left = 15.0
+content_margin_right = 15.0
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6n3jo"]
+bg_color = Color(0.65098, 0, 0.0470588, 1)
+
+[node name="CanvasLayer" type="CanvasLayer"]
+script = ExtResource("1_5gs2i")
+
+[node name="GameInfo" type="Label" parent="."]
+unique_name_in_owner = true
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -78.0
+offset_right = 202.0
+grow_vertical = 0
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="RestartButton" type="Button" parent="MarginContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_fonts/font = SubResource("SystemFont_yqq7w")
+theme_override_font_sizes/font_size = 32
+theme_override_styles/normal = SubResource("StyleBoxFlat_cmco3")
+text = "Restart"
+
+[node name="PromotionContainer" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("2_bvaq3")
+
+[node name="CenterContainer" type="CenterContainer" parent="PromotionContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PromotionContainer/CenterContainer"]
+layout_mode = 2
+
+[node name="Bishop" type="Button" parent="PromotionContainer/CenterContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Bishop"
+
+[node name="Knight" type="Button" parent="PromotionContainer/CenterContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Knight
+"
+
+[node name="Rook" type="Button" parent="PromotionContainer/CenterContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Rook
+"
+
+[node name="Queen" type="Button" parent="PromotionContainer/CenterContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Queen"
+
+[node name="Cancel" type="Button" parent="PromotionContainer/CenterContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_6n3jo")
+text = "Cancel"
